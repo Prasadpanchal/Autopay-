@@ -1,23 +1,25 @@
-// src/pages/Reports.js
 import React from 'react';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-// import { saveAs } from 'file-saver';
 import './Reports.css';
 
-const sampleData = [
-  { id: 1, name: 'John Doe', date: '2025-05-01', amount: 2000, status: 'Completed' },
-  { id: 2, name: 'Jane Smith', date: '2025-05-05', amount: 3000, status: 'Failed' },
-  { id: 3, name: 'Alice', date: '2025-05-07', amount: 1500, status: 'Scheduled' },
-];
-
 const Reports = () => {
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(sampleData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'PaymentHistory');
-    XLSX.writeFile(workbook, 'Payment_Report.xlsx');
+  const exportToExcel = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/export-excel');
+      if (!response.ok) throw new Error('Failed to fetch Excel file');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'Payment_Report.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error exporting Excel:', error);
+    }
   };
 
   const exportToPDF = () => {
@@ -26,7 +28,11 @@ const Reports = () => {
     doc.autoTable({
       startY: 20,
       head: [['ID', 'Name', 'Date', 'Amount', 'Status']],
-      body: sampleData.map(row => [row.id, row.name, row.date, row.amount, row.status]),
+      body: [
+        ['1', 'John Doe', '2025-05-01', 2000, 'Completed'],
+        ['2', 'Jane Smith', '2025-05-05', 3000, 'Failed'],
+        ['3', 'Alice', '2025-05-07', 1500, 'Scheduled'],
+      ]
     });
     doc.save('Payment_Report.pdf');
   };
@@ -35,11 +41,14 @@ const Reports = () => {
     <div className="reports-container" style={{ padding: '20px' }}>
       <h2>Reports</h2>
       <p>Download your payment history in Excel or PDF format.</p>
-      <button className='report-btn' onClick={exportToExcel} style={{ marginRight: '10px' }}>🡇 Export to Excel</button>
-      <button className='report-btn' onClick={exportToPDF}>🡇 Export to PDF</button>
+      <button className='report-btn' onClick={exportToExcel} style={{ marginRight: '10px' }}>
+        ⬇ Export to Excel
+      </button>
+      <button className='report-btn' onClick={exportToPDF}>
+        ⬇ Export to PDF
+      </button>
     </div>
   );
 };
 
 export default Reports;
-
