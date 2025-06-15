@@ -2,9 +2,13 @@
   padding: 20px;
 }
 
-.payment-list-container h2 {
-  margin-bottom: 20px;
+.pay{
+  -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(90deg, #4964e5, #c544d5);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
+
 
 table {
   width: 100%;

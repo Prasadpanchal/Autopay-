@@ -1,5 +1,6 @@
 // src/pages/Reports.js
 import React, { useState, useEffect } from 'react';
+import { FiDownload } from "react-icons/fi";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'; // हे jspdf ऑब्जेक्टमध्ये autoTable फंक्शन जोडते
@@ -143,7 +144,7 @@ const Reports = () => {
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Reports</h2>
       <p className="text-gray-600 mb-4">Download your payment history in Excel (CSV) or PDF format.</p>
       <button className='report-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mr-4 transition duration-300' onClick={exportToExcel}>
-        <span role="img" aria-label="download excel">⬇</span> Export to Excel
+        <span role="img" aria-label="download excel"><FiDownload /></span> Export to Excel
       </button>
       
       {/* <button className='report-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-300' onClick={exportToPDF}>

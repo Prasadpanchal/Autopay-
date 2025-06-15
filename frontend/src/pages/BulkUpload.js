@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiUpload } from "react-icons/fi";
 import * as XLSX from 'xlsx'; // For file preview
 import api from '../api'; // To call the backend API
 import { useNavigate } from 'react-router-dom'; // To redirect after upload
@@ -102,8 +103,8 @@ const BulkUpload = () => {
         className="btn btn-primary mt-3" 
         onClick={handleUpload} 
         disabled={!selectedFile || loading}
-      >
-        {loading ? 'Uploading...' : '🡹 Upload Payments to Server'}
+      ><FiUpload/>
+        {loading ? 'Uploading...' :' Upload Payments to Server'}
       </button>
 
       {filePreviewData.length > 0 && (
