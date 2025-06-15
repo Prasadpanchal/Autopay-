@@ -20,11 +20,11 @@ def send_notification_email(recipient_email_unused, subject, body):
     HARDCODED_RECEIVER_EMAIL = 'gauravsonar260@gmail.com' # Receiver mail
 
     try:
-        # Here you are directly using a hardcoded App Password.
-        # Ideally, this should come from config.py.
-        # But if you insist on this method, ensure this password is new and correct.
+        # Note: Flask-Mail uses MAIL_USERNAME and MAIL_PASSWORD from app.config
+        # The SENDER_EMAIL and APP_PASSWORD_LOCAL defined here are not directly used by mail.send()
+        # but are left for reference based on your previous code.
         SENDER_EMAIL = 'prasadpanchalps@gmail.com' # Keep same as login username
-        APP_PASSWORD_LOCAL = 'yvkv bscs dzhk yiar' # This local variable is not used by mail.send() directly.
+        # APP_PASSWORD_LOCAL = 'yvkv bscs dzhk yiar' # This local variable is not used by mail.send() directly.
 
 
         msg = Message(subject, sender=current_app.config['MAIL_DEFAULT_SENDER'], recipients=[HARDCODED_RECEIVER_EMAIL])
@@ -79,6 +79,30 @@ def get_user_payments(user_id):
             'created_at': payment.created_at.strftime('%Y-%m-%d %H:%M:%S')
         })
     return jsonify(payments_data), 200
+
+# --- NEW API ENDPOINT FOR ALL PAYMENTS ---
+@api.route('/all-payments/<int:user_id>', methods=['GET'])
+def get_all_payments(user_id):
+    """Fetches all payments (with all statuses) for a specific user."""
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    payments = Payment.query.filter_by(user_id=user_id).order_by(Payment.due_date.desc()).all()
+    
+    payments_data = []
+    for payment in payments:
+        payments_data.append({
+            'id': payment.id,
+            'payee': payment.payee,
+            'amount': float(payment.amount),
+            'due_date': payment.due_date.strftime('%Y-%m-%d'),
+            'method': payment.method,
+            'status': payment.status,
+            'created_at': payment.created_at.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    return jsonify(payments_data), 200
+# --- END NEW API ENDPOINT ---
 
 @api.route('/schedule-payment', methods=['POST'])
 def schedule_payment():
