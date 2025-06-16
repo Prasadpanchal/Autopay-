@@ -50,7 +50,7 @@ const Reports = () => {
       ID: payment.id,
       Payee: payment.payee,
       Amount: payment.amount,
-      'Due Date': payment.due_date.toISOString().split('T')[0], // McClellan-MM-DD format
+      'Due Date': payment.due_date.toISOString().split('T')[0], // YYYY-MM-DD format
       Method: payment.method,
       Status: payment.status,
       'Created At': payment.created_at.toLocaleString() // Local date and time format
@@ -144,17 +144,19 @@ const Reports = () => {
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Reports</h2>
       <p className="text-gray-600 mb-4">Download your payment history in Excel (CSV) or PDF format.</p>
       <button className='report-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md mr-4 transition duration-300' onClick={exportToExcel}>
-        <span role="img" aria-label="download excel"><FiDownload /></span> Export to Excel
+        <FiDownload className="inline-block mr-2" /> Export to Excel
       </button>
       
+      {/* PDF Export Button (Uncomment if needed) */}
       {/* <button className='report-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-300' onClick={exportToPDF}>
-        <span role="img" aria-label="download pdf">⬇</span> Export to PDF
+        <FiDownload className="inline-block mr-2" /> Export to PDF
       </button> */}
 
       {/* Display data in a table (optional) */}
       <h3 className="text-xl font-semibold text-gray-800 mt-8 mb-4">All Payments (Overview)</h3>
       {allPayments.length > 0 ? (
-        <div className="overflow-x-auto">
+        // इथे div ला table-container-scroll क्लास दिला आहे
+        <div className="table-container-scroll"> 
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead>
               <tr className="bg-gray-100 border-b border-gray-200">
@@ -190,4 +192,3 @@ const Reports = () => {
 };
 
 export default Reports;
-

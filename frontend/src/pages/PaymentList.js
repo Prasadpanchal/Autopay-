@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '../api';
+import './PaymentList.css'; // PaymentList.css इम्पोर्ट केले आहे
 
 const USER_ID = 1; // Demo user ID
 
@@ -10,8 +11,6 @@ function PaymentList() {
   const [payments, setPayments] = useState([]);
 
   // ही फंक्शन तारीख स्ट्रिंगला Date ऑब्जेक्टमध्ये अधिक विश्वासार्हपणे रूपांतरित करेल.
-  // (ही parseDateString फंक्शनची गरज 'Created at' किंवा 'Due Date' नुसार सॉर्ट करत असाल तरच आहे.
-  // ID नुसार सॉर्ट करताना याची थेट गरज नाही, परंतु डिस्प्लेसाठी हे उपयुक्त आहे.)
   const parseDateString = (dateString) => {
     return new Date(dateString); 
   };
@@ -56,45 +55,59 @@ function PaymentList() {
     }
   }
 
+  // DD-MM-YYYY फॉरमॅटसाठी पर्याय
+  const dateFormatterOptions = {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  };
+
   return (
-    <div className="container mt-4">
+    <div id='container' className="container mt-4">
       <h2 className='pay'>Payment List</h2>
-      <table className="table table-bordered mt-3">
-        <thead className="table-light">
-          <tr>
-            <th>ID</th>
-            <th>Payee</th>
-            <th>Amount</th>
-            <th>Due Date</th>
-            <th>Status</th>
-            <th>Method</th>
-            <th>Created at</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.map(payment => (
-            <tr key={payment.id}>
-              <td>{payment.id}</td>
-              <td>{payment.payee}</td>
-              <td>₹{payment.amount.toFixed(2)}</td>
-              <td>{parseDateString(payment.due_date).toLocaleDateString()}</td> {/* तारीख वाचनीय स्वरूपात दाखवा */}
-              <td className={`fw-bold ${getStatusClass(payment.status)}`}>{payment.status}</td>
-              <td>{payment.method}</td>
-              <td>{parseDateString(payment.created_at).toLocaleString()}</td> {/* तारीख आणि वेळ वाचनीय स्वरूपात दाखवा */}
-              <td>
-                <button
-                  className="button btn-danger btn-sm"
-                  onClick={() => handleCancel(payment.id)}
-                  disabled={payment.status !== 'Pending'} // 'Pending' नसताना बटण disabled होईल
-                >
-                  Cancel
-                </button>
-              </td>
+      {/* नवीन div जो टेबलला रॅप करेल आणि स्क्रोलिंग हाताळेल */}
+      <div id='table-container-scroll' className="table-container-scroll">
+        <table className="table table-bordered mt-3">
+          <thead className="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Payee</th>
+              <th>Amount</th>
+              <th>Due Date</th>
+              <th>Status</th>
+              <th>Method</th>
+              <th>Created at</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {payments.map(payment => (
+              <tr key={payment.id}>
+                <td>{payment.id}</td>
+                <td>{payment.payee}</td>
+                <td>₹{payment.amount.toFixed(2)}</td>
+                <td>{parseDateString(payment.due_date).toLocaleDateString('en-GB', dateFormatterOptions)}</td> 
+                <td className={`fw-bold ${getStatusClass(payment.status)}`}>{payment.status}</td>
+                <td>{payment.method}</td>
+                <td>
+                  {parseDateString(payment.created_at).toLocaleDateString('en-GB', dateFormatterOptions)}
+                  {' '} 
+                  {parseDateString(payment.created_at).toLocaleTimeString('en-GB')}
+                </td>
+                <td>
+                  <button id='btn-danger'
+                    className="button btn-danger btn-sm"
+                    onClick={() => handleCancel(payment.id)}
+                    disabled={payment.status !== 'Pending' && payment.status !== 'SCHEDULED'} 
+                  >
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div> {/* .table-container-scroll div चा शेवट */}
     </div>
   );
 }

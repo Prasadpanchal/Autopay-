@@ -1,47 +1,129 @@
+/* File: frontend/src/pages/PaymentList.css */
+
 .payment-list-container {
   padding: 20px;
 }
 
-.pay{
+.pay {
   -webkit-text-fill-color: transparent;
-    background-image: linear-gradient(90deg, #4964e5, #c544d5);
-    -webkit-background-clip: text;
-    background-clip: text;
+  background-image: linear-gradient(90deg, #4964e5, #c544d5);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
-
 
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate; /* CHANGE THIS */
   background-color: #fff;
+  border-spacing: 0; 
   box-shadow: 0 0 10px #ccc;
 }
 
+/* th, td चे मूलभूत स्टाइल्स */
 th, td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
   text-align: center;
+  /* कॉलम्ससाठी किमान रुंदी सेट करा, जेणेकरून मजकूर कट होणार नाही */
+  min-width: 80px; /* तुमच्या कंटेंटनुसार हे ऍडजस्ट करा */
 }
 
-.cancel-btn, .edit-btn {
-  padding: 6px 10px;
+/* Base styles for buttons with 'button' class */
+.button {
+  padding: 10px 20px;
   margin: 2px;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.cancel-btn {
-  background-color: #f44336;
-  color: white;
+/* Cancel Button specific styles (btn-danger) - Active state */
+.btn-danger {
+  background-image: linear-gradient(135deg, #FF6B6B 0%, #EE5253 100%) !important;
+  color: white !important;
+  box-shadow: 0 6px 18px rgba(255, 107, 107, 0.45) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Hover effect for active (not disabled) Cancel button */
+.btn-danger:hover:not(:disabled) {
+  background-image: linear-gradient(135deg, #EE5253 0%, #C70039 100%) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(200, 0, 0, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Disabled Cancel Button styles */
+.button.btn-danger:disabled {
+  background-color: #f8d7da !important;
+  color: #a12c2c !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(0) !important;
+  border: none !important;
+}
+
+/* Edit button styles (जर तुम्ही edit बटण वापरत असाल तर) */
 .edit-btn {
-  background-color: #2196f3;
-  color: white;
+  background-image: linear-gradient(135deg, #4CAF50 0%, #4CAF90 100%) !important;
+  color: white !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  border-radius: 25px;
+  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.45) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease-in-out;
 }
 
-.cancel-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.edit-btn:hover {
+  background-image: linear-gradient(135deg, #4CAF90 0%, #388E3C 100%) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 25px rgba(56, 142, 60, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.edit-btn:disabled {
+  background-color: #e0f2f7 !important;
+  color: #0d47a1 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(0) !important;
+  border: none !important;
+}
+
+/* मुख्य स्क्रोल करण्यायोग्य कंटेनर */
+#table-container-scroll {
+  max-height: 581px; 
+  overflow-y: auto; 
+  border: 1px solid #dee2e6;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  width: 100%; 
+  position: relative; 
+
+}
+
+/* हेडरला स्क्रोल करताना स्थिर ठेवण्यासाठी */
+.table-container-scroll thead {
+  position: sticky;
+  top: 0; 
+  background-color: #f8f9fa; 
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); 
+}
+
+/* सुनिश्चित करा की टेबलमध्ये असलेला mt-3 काढून टाकला आहे किंवा 0 वर सेट केला आहे */
+.table-container-scroll .table.mt-3 {
+  margin-top: 0;
 }
