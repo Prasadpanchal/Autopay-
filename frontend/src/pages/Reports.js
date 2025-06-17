@@ -21,13 +21,31 @@ const Reports = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        
         // Convert date strings to Date objects for easier sorting
         const formattedData = data.map(payment => ({
           ...payment,
-          due_date: new Date(payment.due_date), // Convert to Date object
+          // 'due_date' आणि 'created_at' स्ट्रिंग स्वरूपातून Date ऑब्जेक्टमध्ये रूपांतरित करा
+          due_date: new Date(payment.due_date), 
           created_at: new Date(payment.created_at)
         }));
-        setAllPayments(formattedData);
+
+        // डेटा मिळवल्यानंतर, 'created_at' नुसार चढत्या क्रमाने सॉर्ट करा
+        const sortedData = formattedData.sort((a, b) => {
+            // तारखा वैध Date ऑब्जेक्ट्स आहेत याची खात्री करा
+            const dateA = a.created_at instanceof Date ? a.created_at : new Date(a.created_at);
+            const dateB = b.created_at instanceof Date ? b.created_at : new Date(b.created_at);
+
+            // अवैध तारखा हाताळण्यासाठी (जर parsing अयशस्वी झाले)
+            if (isNaN(dateA.getTime())) return 1; // a ही अवैध तारीख असल्यास b ला प्राधान्य
+            if (isNaN(dateB.getTime())) return -1; // b ही अवैध तारीख असल्यास a ला प्राधान्य
+            
+            // चढत्या क्रमाने (सर्वात जुने प्रथम)
+            return dateA.getTime() - dateB.getTime(); 
+        });
+        
+        console.log("Fetched and sorted data (Ascending):", sortedData); // डीबगिंगसाठी
+        setAllPayments(sortedData); // सॉर्ट केलेला डेटा सेट करा
       } catch (e) {
         setError("Error fetching data: " + e.message);
         console.error("Error fetching data:", e);
@@ -42,7 +60,7 @@ const Reports = () => {
   // Export to Excel (CSV)
   const exportToExcel = () => {
     if (allPayments.length === 0) {
-      alert("No data to export.");
+      alert("No data to export."); // ऍलर्ट ऐवजी कस्टम UI वापरा
       return;
     }
     // Convert data to suitable format for CSV
@@ -50,7 +68,7 @@ const Reports = () => {
       ID: payment.id,
       Payee: payment.payee,
       Amount: payment.amount,
-      'Due Date': payment.due_date.toISOString().split('T')[0], // YYYY-MM-DD format
+      'Due Date': payment.due_date.toISOString().split('T')[0], // McClellan-MM-DD format
       Method: payment.method,
       Status: payment.status,
       'Created At': payment.created_at.toLocaleString() // Local date and time format
@@ -65,7 +83,7 @@ const Reports = () => {
   // Export to PDF
   const exportToPDF = () => {
     if (allPayments.length === 0) {
-      alert("No data to export.");
+      alert("No data to export."); // ऍलर्ट ऐवजी कस्टम UI वापरा
       return;
     }
 
@@ -147,7 +165,7 @@ const Reports = () => {
         <FiDownload className="inline-block mr-2" /> Export to Excel
       </button>
       
-      {/* PDF Export Button (Uncomment if needed) */}
+      {/* PDF Export Button */}
       {/* <button className='report-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition duration-300' onClick={exportToPDF}>
         <FiDownload className="inline-block mr-2" /> Export to PDF
       </button> */}
@@ -155,7 +173,7 @@ const Reports = () => {
       {/* Display data in a table (optional) */}
       <h3 className="text-xl font-semibold text-gray-800 mt-8 mb-4">All Payments (Overview)</h3>
       {allPayments.length > 0 ? (
-        // इथे div ला table-container-scroll क्लास दिला आहे
+        // Here, the div is given the table-container-scroll class
         <div className="table-container-scroll"> 
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead>

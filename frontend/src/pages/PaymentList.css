@@ -120,10 +120,18 @@ th, td {
   top: 0; 
   background-color: #f8f9fa; 
   z-index: 10;
+  text-align-last: center;
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); 
 }
 
 /* सुनिश्चित करा की टेबलमध्ये असलेला mt-3 काढून टाकला आहे किंवा 0 वर सेट केला आहे */
 .table-container-scroll .table.mt-3 {
   margin-top: 0;
+}
+
+.table-container-scroll table {
+    width: 100%;
+    border-collapse: separate;
+    text-align-last: center;
+    table-layout: fixed;
 }
