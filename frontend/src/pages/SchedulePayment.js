@@ -71,6 +71,7 @@ function SchedulePayment() {
         <label htmlFor="method">Payment Method</label>
         <select
           id="method"
+          className='option'
           name="method"
           value={formData.method}
           onChange={handleChange}
@@ -83,7 +84,7 @@ function SchedulePayment() {
           <option value="Cash">Cash</option>
         </select>
 
-        <button type="submit">Schedule Payment</button>
+        <button id='submit' type="submit">Schedule Payment</button>
       </form>
     </div>
   );

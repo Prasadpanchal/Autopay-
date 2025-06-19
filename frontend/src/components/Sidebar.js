@@ -1,10 +1,11 @@
+// src/components/Sidebar.js
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import './Sidebar.css';
 import { FaTachometerAlt, FaCalendarAlt, FaListUl, FaRedo, FaCloudUploadAlt, FaChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
 
-const Sidebar = () => {
-  
+// onLogout प्रॉप स्वीकार करा
+const Sidebar = ({ onLogout }) => { // onLogout प्रॉप इथे स्वीकारला
   return (
     <div className="custom-sidebar">
       <div className="sidebar-logo">AutoPay</div>
@@ -44,10 +45,11 @@ const Sidebar = () => {
         <span>Settings</span>
       </NavLink>
 
-      <NavLink to="/logout" className="sidebar-link logout" activeClassName="active" end>
+      {/* Logout बटण - NavLink ऐवजी साधा बटण वापरा आणि onClick वर onLogout फंक्शन कॉल करा */}
+      <button onClick={onLogout} className="sidebar-link logout"> {/* onClick वर onLogout फंक्शन कॉल करा */}
         <FaSignOutAlt className="icon" />
         <span>Logout</span>
-      </NavLink>
+      </button>
     </div>
   );
 };

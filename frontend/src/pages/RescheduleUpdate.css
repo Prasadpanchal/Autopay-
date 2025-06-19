@@ -4,6 +4,10 @@
 
 .reschedule-container h2 {
   margin-bottom: 20px;
+  -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(90deg, #4964e5, #c544d5);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 table {

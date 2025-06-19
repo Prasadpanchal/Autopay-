@@ -1,51 +1,186 @@
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 40px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* File: src/pages/Login.css */
+
+/* body ला सामान्य फ्लोमध्ये परत आणा, त्यामुळे इतर पेजेसवर परिणाम होणार नाही */
+body {
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
+  background: #ece8ff;
+  min-height: 100vh; 
 }
 
-.login-container h2 {
-  margin-bottom: 24px;
-  color: #2c3e50;
-  font-size: 24px;
+/* हा कंटेनर फक्त लॉगिन पेजला मध्यभागी आणेल */
+.login-full-page-center {
+  display: flex;
+  justify-content: center; /* क्षैतिज मध्यभागी */
+  align-items: center; /* अनुलंब मध्यभागी */
+  min-height: 100vh; /* संपूर्ण व्ह्यूपोर्टची उंची घ्या */
+  width: 100%; /* उपलब्ध रुंदी घ्या */
+}
+
+
+/* नवीन बाह्य कंटेनर जो दोन्ही विभागांना (फॉर्म आणि मेसेजेस) रॅप करतो */
+.login-page-wrapper {
+  display: flex;
+  justify-content: center; /* या कंटेनरमधील आयटम्स (फॉर्म आणि माहिती विभाग) मध्यभागी ठेवा */
+  align-items: center;
+  gap: 60px;
+  padding: 40px;
+  max-width: 1200px; /* ही रुंदी दोन्ही विभागांना पकडून ठेवेल */
+  width: 100%; /* उपलब्ध रुंदी वापरा */
+  margin: 7rem auto; /* मध्यभागी आणा */
+  border-radius: 16px;
+  box-sizing: border-box; /* पॅडिंग रुंदीमध्ये समाविष्ट करण्यासाठी */
+  flex-direction: row-reverse; /* आयटम्सचा क्रम उलटतो (लॉगिन फॉर्म उजवीकडे येईल) */
+}
+
+/* लॉगिन फॉर्म कंटेनर (आकार मूळप्रमाणे निश्चित राहील) */
+.login-container {
+  width: 400px; /* निश्चित रुंदी */
+  padding: 40px 30px;
+  background: white;
+  border-radius: 44px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* डाव्या बाजूचा वेलकम/फीचर मेसेज विभाग (जो आता फॉर्मच्या डावीकडे येईल) */
+.login-info-section {
+  max-width: 500px; /* हे तुमच्या मेसेज विभागासाठी जास्तीत जास्त रुंदी आहे */
+  color: #333;
+  text-align: left;
+  line-height: 1.6;
+  flex-grow: 1;
+  flex-basis: 45%; /* लहान स्क्रीनवर 45% जागा घ्या */
+  min-width: 300px;
+}
+
+.info-title {
+  font-size: 2.5rem;
   font-weight: bold;
+  margin-bottom: 25px;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(90deg, #5f81ed, #5db4ef 46%, #af70ef);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #2c2c2c;
+  line-height: 1.2;
 }
 
-.login-container input {
-  width: 100%;
-  padding: 12px;
-  margin: 12px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 0.2s;
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+}
+
+.info-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #555;
+}
+
+.info-list li span {
+  margin-right: 15px;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: #5f2eea;
+}
+
+.info-tagline {
+  font-size: 1rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* Title (Login form title) */
+.login-container h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #2c2c2c;
+}
+
+/* Input fields */
+.login-container input[type="text"],
+.login-container input[type="password"] {
+  width: 92%;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 22px;
+  background-color: #f0f0f5;
+  font-size: 14px;
+  transition: 0.3s ease;
 }
 
 .login-container input:focus {
-  border-color: #3498db;
   outline: none;
+  background-color: #e8e8f0;
+  box-shadow: 0 0 0 2px #6a5acd55;
 }
 
+/* Login button */
 .login-container button {
   width: 100%;
   padding: 12px;
-  background-color: #3498db;
+  background: linear-gradient(90deg, #5f2eea, #904eed);
   color: white;
-  font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: 20px;
+  font-size: 16px;
   cursor: pointer;
-  margin-top: 16px;
-  transition: background-color 0.2s;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 14px rgba(95, 46, 234, 0.3);
+}
+#submit{
+  border-radius: 20px;
+  
+}
+.login-container button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
 }
 
-.login-container button:hover {
-  background-color: #2980b9;
+/* मीडिया क्वेरी (Media Queries) - लहान स्क्रीनसाठी प्रतिसाद देणारे डिझाइन */
+@media (max-width: 850px) {
+  .login-page-wrapper {
+    flex-direction: column; /* लहान स्क्रीनवर स्तंभ (column) लेआउट */
+    gap: 40px;
+    padding: 20px;
+    margin: auto; /* मध्यभागी आणा */
+  }
+
+  .login-info-section { /* मीडिया क्वेरीमध्येही योग्य क्लास नाव वापरा */
+    text-align: center; /* मजकूर मध्यभागी आणा */
+  }
+
+  .info-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-list li {
+    justify-content: center;
+  }
+
+  .info-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+  }
+  .info-title {
+    font-size: 1.8rem;
+  }
+  .info-list {
+    font-size: 1rem;
+  }
 }
