@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #ece8ff; /* तुमच्या लॉगिन पेजच्या पार्श्वभूमीशी जुळण्यासाठी */
+  background-color: #ece8ff; 
   overflow-x: hidden;
 }
 
@@ -17,7 +17,7 @@ body {
 }
 
 .app-main-content {
-  margin-left: 240px; /* साइडबारच्या रुंदीइतके मार्जिन द्या */
+  margin-left: 240px; 
   padding: 20px;
   flex: 1;
   width: calc(100% - 240px);
@@ -26,7 +26,7 @@ body {
   min-height: 100vh;
 }
 
-/* मुख्य कंटेंट विभाग जेव्हा साइडबार नसतो (उदा. लॉगिन पेज) */
+/* Main content section when there is no sidebar (e.g. login page) */
 .app-main-content-no-sidebar {
   flex: 1;
   padding: 20px;

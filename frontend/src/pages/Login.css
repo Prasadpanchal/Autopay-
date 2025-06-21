@@ -1,6 +1,6 @@
 /* File: src/pages/Login.css */
 
-/* body ला सामान्य फ्लोमध्ये परत आणा, त्यामुळे इतर पेजेसवर परिणाम होणार नाही */
+/* Bring the body back to normal flow, so it doesn't affect other pages. */
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -8,34 +8,34 @@ body {
   min-height: 100vh; 
 }
 
-/* हा कंटेनर फक्त लॉगिन पेजला मध्यभागी आणेल */
+/* This container will only center the login page. */
 .login-full-page-center {
   display: flex;
-  justify-content: center; /* क्षैतिज मध्यभागी */
-  align-items: center; /* अनुलंब मध्यभागी */
-  min-height: 100vh; /* संपूर्ण व्ह्यूपोर्टची उंची घ्या */
-  width: 100%; /* उपलब्ध रुंदी घ्या */
+  justify-content: center; 
+  align-items: center; 
+  min-height: 100vh; 
+  width: 100%; 
 }
 
 
-/* नवीन बाह्य कंटेनर जो दोन्ही विभागांना (फॉर्म आणि मेसेजेस) रॅप करतो */
+/* New outer container that wraps both sections (forms and messages) */
 .login-page-wrapper {
   display: flex;
-  justify-content: center; /* या कंटेनरमधील आयटम्स (फॉर्म आणि माहिती विभाग) मध्यभागी ठेवा */
+  justify-content: center; 
   align-items: center;
   gap: 60px;
   padding: 40px;
-  max-width: 1200px; /* ही रुंदी दोन्ही विभागांना पकडून ठेवेल */
-  width: 100%; /* उपलब्ध रुंदी वापरा */
-  margin: 7rem auto; /* मध्यभागी आणा */
+  max-width: 1200px; 
+  width: 100%; 
+  margin: 7rem auto; 
   border-radius: 16px;
-  box-sizing: border-box; /* पॅडिंग रुंदीमध्ये समाविष्ट करण्यासाठी */
-  flex-direction: row-reverse; /* आयटम्सचा क्रम उलटतो (लॉगिन फॉर्म उजवीकडे येईल) */
+  box-sizing: border-box; 
+  flex-direction: row-reverse; 
 }
 
-/* लॉगिन फॉर्म कंटेनर (आकार मूळप्रमाणे निश्चित राहील) */
+/* Login form container (size will remain fixed as original) */
 .login-container {
-  width: 400px; /* निश्चित रुंदी */
+  width: 400px; 
   padding: 40px 30px;
   background: white;
   border-radius: 44px;
@@ -44,14 +44,14 @@ body {
   flex-shrink: 0;
 }
 
-/* डाव्या बाजूचा वेलकम/फीचर मेसेज विभाग (जो आता फॉर्मच्या डावीकडे येईल) */
+/* Left-side welcome/feature message section (which will now appear on the left of the form) */
 .login-info-section {
-  max-width: 500px; /* हे तुमच्या मेसेज विभागासाठी जास्तीत जास्त रुंदी आहे */
+  max-width: 500px; 
   color: #333;
   text-align: left;
   line-height: 1.6;
   flex-grow: 1;
-  flex-basis: 45%; /* लहान स्क्रीनवर 45% जागा घ्या */
+  flex-basis: 45%; 
   min-width: 300px;
 }
 
@@ -145,17 +145,17 @@ body {
   transform: translateY(-1px);
 }
 
-/* मीडिया क्वेरी (Media Queries) - लहान स्क्रीनसाठी प्रतिसाद देणारे डिझाइन */
+/* Media Queries - Responsive design for small screens */
 @media (max-width: 850px) {
   .login-page-wrapper {
-    flex-direction: column; /* लहान स्क्रीनवर स्तंभ (column) लेआउट */
+    flex-direction: column; 
     gap: 40px;
     padding: 20px;
-    margin: auto; /* मध्यभागी आणा */
+    margin: auto; 
   }
 
-  .login-info-section { /* मीडिया क्वेरीमध्येही योग्य क्लास नाव वापरा */
-    text-align: center; /* मजकूर मध्यभागी आणा */
+  .login-info-section { 
+    text-align: center; 
   }
 
   .info-list {

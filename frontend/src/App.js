@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'; // useLocation आणि useNavigate इम्पोर्ट केले आहेत
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'; // useLocation and useNavigate are imported
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -10,10 +10,10 @@ import RescheduleUpdate from './pages/RescheduleUpdate';
 import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
 import Setting from './pages/Settings';
-import './App.css'; // App.css इम्पोर्ट करा
+import './App.css'; // Import App.css
 
 function App() {
-  // isLoggedIn स्थिती लोकल स्टोरेजमधून लोड करा.
+  // Load the isLoggedIn state from local storage.
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     try {
       const savedState = localStorage.getItem('isLoggedIn');
@@ -24,10 +24,10 @@ function App() {
     }
   });
 
-  const location = useLocation(); // वर्तमान मार्ग (current path) मिळवण्यासाठी
-  const navigate = useNavigate(); // useNavigate हुक वापरा
+  const location = useLocation(); // To get the current path
+  const navigate = useNavigate(); // Use the useNavigate hook
 
-  // isLoggedIn स्थिती बदलल्यावर लोकल स्टोरेजमध्ये साठवा
+  // Store in local storage when isLoggedIn state changes
   useEffect(() => {
     try {
       localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
@@ -36,58 +36,58 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  // लॉगइन यशस्वी झाल्यावर कॉल करण्यासाठी फंक्शन
+  // Function to call when login is successful
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
-  // लॉगआउट करण्यासाठी फंक्शन
-  const handleLogout = async () => { // फंक्शनला async बनवले
-    setIsLoggedIn(false); // फ्रंटएंडची स्थिती अपडेट करते
-    localStorage.removeItem('isLoggedIn'); // लोकल स्टोरेजमधून स्थिती काढते
-    localStorage.removeItem('sidebarOpen'); // साइडबारची स्थिती काढते
+  // Function to logout
+  const handleLogout = async () => { // Made the function async
+    setIsLoggedIn(false); // Updates the status of the frontend
+    localStorage.removeItem('isLoggedIn'); // Retrieves status from local storage.
+    localStorage.removeItem('sidebarOpen'); // Removes the sidebar position.
     
-    // सुरक्षिततेसाठी, तुम्ही बॅकएंडला लॉगआउट करण्याची विनंती येथे पाठवू शकता.
-    // हे टोकन इनव्हॅलिड करण्यासाठी किंवा सेशन नष्ट करण्यासाठी महत्त्वाचे आहे.
-    // उदा. (तुमच्या बॅकएंड एंडपॉइंट आणि टोकन हँडलिंगनुसार जुळवा):
-    // const accessToken = localStorage.getItem('accessToken'); // समजा तुम्ही एक्सेस टोकन साठवले आहे
+    // For security, you can send a logout request to the backend here.
+    // This is important for invalidating the token or destroying the session.
+    // E.g. (Adjust according to your backend endpoint and token handling):
+    // const accessToken = localStorage.getItem('accessToken'); // Suppose you have stored an access token.
     // if (accessToken) {
     //   try {
-    //     await fetch('/api/logout', { // तुमच्या बॅकएंडचा लॉगआउट एंडपॉइंट
+    //     await fetch('/api/logout', { // Your backend's logout endpoint
     //       method: 'POST',
     //       headers: {
     //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${accessToken}` // टोकन पाठवा
+    //         'Authorization': `Bearer ${accessToken}` // Send token
     //       },
-    //       // body: JSON.stringify({}) // जर बॅकएंडला रिक्वेस्ट बॉडीची गरज असेल
+    //       // body: JSON.stringify({}) // If the backend needs a request body
     //     });
     //   } catch (error) {
     //     console.error("Backend logout call failed:", error);
-    //     // एरर आली तरीही युझरला लॉगआउट करा, कारण फ्रंटएंडवरून तो लॉगआउट झाला आहे
+    //     // Logout the user even if an error occurs, because he is logged out from the frontend.
     //   }
     // }
     
-    navigate('/login'); // React Router चा वापर करून नेव्हिगेट करा, पेज रीलोड न करता
+    navigate('/login'); // Navigate using React Router, without reloading the page
   };
 
-  // साइडबार दाखवायचा आहे की नाही हे ठरवण्यासाठी लॉजिक
-  // साइडबार फक्त तेव्हाच दिसेल जेव्हा युझर लॉगइन केलेला असेल आणि '/login' किंवा '/' (रूट) मार्गावर नसेल.
+  // Logic to determine whether to show the sidebar
+  // The sidebar will only be visible if the user is logged in and not on the '/login' or '/' (root) path.
   const showSidebar = isLoggedIn && (location.pathname !== '/' && location.pathname !== '/login');
 
   return (
-    // <Router> घटक src/index.js मध्ये असणे आवश्यक आहे
-    <div className="app-container"> {/* मुख्य कंटेनर */}
-      {/* Sidebar फक्त showSidebar सत्य असल्यास दाखवा */}
+    // The <Router> element must be in src/index.js
+    <div className="app-container"> {/* main container */}
+      {/* Show Sidebar only if showSidebar is true. */}
       {showSidebar && <Sidebar onLogout={handleLogout} />}
       
-      {/* मुख्य कंटेंट विभाग */}
+      {/* Main content section */}
       <div className={showSidebar ? "app-main-content" : "app-main-content-no-sidebar"}>
         <Routes>
-          {/* लॉगिन पेज (नेहमी ऍक्सेसिबल) */}
+          {/* Login page (always accessible) */}
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
-          {/* संरक्षित रूट्स (Protected Routes) */}
+          {/* Protected Routes */}
           {isLoggedIn ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
@@ -99,7 +99,7 @@ function App() {
               <Route path="/settings" element={<Setting />} />
             </>
           ) : (
-            // जर लॉग इन नसेल तर कोणत्याही संरक्षित रूटवर गेल्यास /login वर पुनर्निर्देशित करा
+            // If not logged in, redirect to /login if you go to any protected root.
             <Route path="*" element={<Login onLogin={handleLogin} />} />
           )}
         </Routes>

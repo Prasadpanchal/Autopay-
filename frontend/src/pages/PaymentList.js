@@ -3,14 +3,14 @@
 
 import React, { useEffect, useState } from 'react';
 import api from '../api';
-import './PaymentList.css'; // PaymentList.css इम्पोर्ट केले आहे
+import './PaymentList.css'; 
 
 const USER_ID = 1; // Demo user ID
 
 function PaymentList() {
   const [payments, setPayments] = useState([]);
 
-  // ही फंक्शन तारीख स्ट्रिंगला Date ऑब्जेक्टमध्ये अधिक विश्वासार्हपणे रूपांतरित करेल.
+  // This function will more reliably convert a date string to a Date object.
   const parseDateString = (dateString) => {
     return new Date(dateString); 
   };
@@ -18,9 +18,9 @@ function PaymentList() {
   const fetchPayments = () => {
     api.get(`/payments/${USER_ID}`)
       .then(res => {
-        // डेटा मिळवल्यानंतर, 'id' नुसार उतरत्या क्रमाने सॉर्ट करा
+        // After retrieving the data, sort in descending order by 'id'
         const sortedPayments = res.data.sort((a, b) => {
-          return b.id - a.id; // ID नुसार उतरत्या क्रमाने (सर्वात मोठा ID प्रथम)
+          return b.id - a.id; // In descending order by ID (largest ID first)
         });
         setPayments(sortedPayments);
       })
@@ -36,7 +36,7 @@ function PaymentList() {
       api.post(`/payment/${id}/cancel`)
         .then(() => {
           alert('Payment cancelled!');
-          // लिस्टला रिफ्रेश करा
+          // Refresh the list.
           fetchPayments();
         })
         .catch(err => {
@@ -51,11 +51,11 @@ function PaymentList() {
       case 'Paid': return 'text-success';
       case 'Failed': return 'text-danger';
       case 'Cancelled': return 'text-muted';
-      default: return 'text-warning'; // Pending किंवा इतर स्थितींसाठी
+      default: return 'text-warning'; // For Pending or other statuses
     }
   }
 
-  // DD-MM-YYYY फॉरमॅटसाठी पर्याय
+  // Options for DD-MM-YYYY format
   const dateFormatterOptions = {
     day: '2-digit',
     month: '2-digit',
@@ -65,7 +65,7 @@ function PaymentList() {
   return (
     <div id='container' className="container mt-4">
       <h2 className='pay'>Payment List</h2>
-      {/* नवीन div जो टेबलला रॅप करेल आणि स्क्रोलिंग हाताळेल */}
+      {/* New div that will wrap the table and handle scrolling */}
       <div id='table-container-scroll' className="table-container-scroll">
         <table className="table table-bordered mt-3">
           <thead className="table-light">
@@ -107,7 +107,7 @@ function PaymentList() {
             ))}
           </tbody>
         </table>
-      </div> {/* .table-container-scroll div चा शेवट */}
+      </div> {/* .End of table-container-scroll div */}
     </div>
   );
 }

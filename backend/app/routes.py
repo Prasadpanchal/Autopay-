@@ -17,7 +17,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 # --- Email Utility Function (Includes hardcoded sender/password/receiver as per request) ---
 def send_notification_email(recipient_email_unused, subject, body):
     """Sends email notifications with hardcoded receiver credentials."""
-    HARDCODED_RECEIVER_EMAIL = 'gauravsonar260@gmail.com' # Receiver mail
+    HARDCODED_RECEIVER_EMAIL = 'prasadpanchal431@gmail.com' # Receiver mail
 
     try:
         # Note: Flask-Mail uses MAIL_USERNAME and MAIL_PASSWORD from app.config

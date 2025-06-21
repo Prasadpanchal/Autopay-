@@ -16,14 +16,14 @@ const Login = ({ onLogin }) => {
       // Redirect to dashboard
       navigate('/dashboard');
     } else {
-      alert('Invalid credentials!'); // ऍलर्ट बॉक्सऐवजी कस्टम मेसेज बॉक्स वापरण्याची शिफारस केली जाते
+      alert('Invalid credentials!'); // It is recommended to use a custom message box instead of an alert box.
     }
   };
 
   return (
-    // नवीन बाह्य कंटेनर जो लॉगिन फॉर्म आणि वेलकम मेसेजेस दोन्हीला रॅप करतो
+    // New external container that wraps both login forms and welcome messages
     <div className="login-page-wrapper">
-      {/* डाव्या बाजूचा वेलकम/फीचर मेसेज विभाग */}
+      {/* Welcome/Feature Message section on the left side*/}
       <div className="login-info-section">
         <h1 className="info-title">Simplify Your Payments with AutoPay</h1>
         <ul className="info-list">
@@ -34,7 +34,7 @@ const Login = ({ onLogin }) => {
         <p className="info-tagline">Your trusted partner for seamless financial management.</p>
       </div>
 
-      {/* उजव्या बाजूचा लॉगिन फॉर्म कंटेनर */}
+      {/* Right-side login form container*/}
       <div className="login-container">
         <h2>Login to AutoPay</h2>
         <form onSubmit={submitHandler}>

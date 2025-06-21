@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { FiDownload } from "react-icons/fi";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable'; // हे jspdf ऑब्जेक्टमध्ये autoTable फंक्शन जोडते
+import 'jspdf-autotable'; // This adds the autoTable function to the jspdf object.
 import './Reports.css';
 
 const Reports = () => {
@@ -25,27 +25,27 @@ const Reports = () => {
         // Convert date strings to Date objects for easier sorting
         const formattedData = data.map(payment => ({
           ...payment,
-          // 'due_date' आणि 'created_at' स्ट्रिंग स्वरूपातून Date ऑब्जेक्टमध्ये रूपांतरित करा
+          // Convert 'due_date' and 'created_at' from string format to Date object
           due_date: new Date(payment.due_date), 
           created_at: new Date(payment.created_at)
         }));
 
-        // डेटा मिळवल्यानंतर, 'created_at' नुसार चढत्या क्रमाने सॉर्ट करा
+        // After retrieving the data, sort in ascending order by 'created_at'
         const sortedData = formattedData.sort((a, b) => {
-            // तारखा वैध Date ऑब्जेक्ट्स आहेत याची खात्री करा
+            // Make sure dates are valid Date objects.
             const dateA = a.created_at instanceof Date ? a.created_at : new Date(a.created_at);
             const dateB = b.created_at instanceof Date ? b.created_at : new Date(b.created_at);
 
-            // अवैध तारखा हाताळण्यासाठी (जर parsing अयशस्वी झाले)
-            if (isNaN(dateA.getTime())) return 1; // a ही अवैध तारीख असल्यास b ला प्राधान्य
-            if (isNaN(dateB.getTime())) return -1; // b ही अवैध तारीख असल्यास a ला प्राधान्य
+            // To handle invalid dates (if parsing fails)
+            if (isNaN(dateA.getTime())) return 1; // If a is an invalid date, b takes precedence.
+            if (isNaN(dateB.getTime())) return -1; // If b is an invalid date, a takes precedence.
             
-            // चढत्या क्रमाने (सर्वात जुने प्रथम)
+            // In ascending order (oldest first)
             return dateA.getTime() - dateB.getTime(); 
         });
         
-        console.log("Fetched and sorted data (Ascending):", sortedData); // डीबगिंगसाठी
-        setAllPayments(sortedData); // सॉर्ट केलेला डेटा सेट करा
+        console.log("Fetched and sorted data (Ascending):", sortedData); // For debugging
+        setAllPayments(sortedData); // Set sorted data
       } catch (e) {
         setError("Error fetching data: " + e.message);
         console.error("Error fetching data:", e);
@@ -60,7 +60,7 @@ const Reports = () => {
   // Export to Excel (CSV)
   const exportToExcel = () => {
     if (allPayments.length === 0) {
-      alert("No data to export."); // ऍलर्ट ऐवजी कस्टम UI वापरा
+      alert("No data to export."); // Use custom UI instead of alerts
       return;
     }
     // Convert data to suitable format for CSV
@@ -83,7 +83,7 @@ const Reports = () => {
   // Export to PDF
   const exportToPDF = () => {
     if (allPayments.length === 0) {
-      alert("No data to export."); // ऍलर्ट ऐवजी कस्टम UI वापरा
+      alert("No data to export."); // Use custom UI instead of alerts
       return;
     }
 

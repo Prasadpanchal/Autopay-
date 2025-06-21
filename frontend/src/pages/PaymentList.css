@@ -19,13 +19,13 @@ table {
   box-shadow: 0 0 10px #ccc;
 }
 
-/* th, td चे मूलभूत स्टाइल्स */
+/* Basic styles of th, td */
 th, td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
   text-align: center;
-  /* कॉलम्ससाठी किमान रुंदी सेट करा, जेणेकरून मजकूर कट होणार नाही */
-  min-width: 80px; /* तुमच्या कंटेंटनुसार हे ऍडजस्ट करा */
+  /* Set a minimum width for columns, so that text is not cut off */
+  min-width: 80px; /* Adjust this according to your content. */
 }
 
 /* Base styles for buttons with 'button' class */
@@ -70,7 +70,7 @@ th, td {
   border: none !important;
 }
 
-/* Edit button styles (जर तुम्ही edit बटण वापरत असाल तर) */
+/* Edit button styles */
 .edit-btn {
   background-image: linear-gradient(135deg, #4CAF50 0%, #4CAF90 100%) !important;
   color: white !important;
@@ -101,7 +101,7 @@ th, td {
   border: none !important;
 }
 
-/* मुख्य स्क्रोल करण्यायोग्य कंटेनर */
+/* Main scrollable container */
 #table-container-scroll {
   max-height: 581px; 
   overflow-y: auto; 
@@ -114,7 +114,7 @@ th, td {
 
 }
 
-/* हेडरला स्क्रोल करताना स्थिर ठेवण्यासाठी */
+/* To keep the header stable while scrolling */
 .table-container-scroll thead {
   position: sticky;
   top: 0; 
@@ -124,7 +124,7 @@ th, td {
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); 
 }
 
-/* सुनिश्चित करा की टेबलमध्ये असलेला mt-3 काढून टाकला आहे किंवा 0 वर सेट केला आहे */
+/* Make sure that mt-3 in the table is removed or set to 0. */
 .table-container-scroll .table.mt-3 {
   margin-top: 0;
 }

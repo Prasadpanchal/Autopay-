@@ -3,23 +3,23 @@
 
 import React, { useState, useEffect } from 'react'; // useEffect import kara
 import api from '../api'; // api client import kara
-import './RescheduleUpdate.css'; // तुमचा CSS फाईलचा मार्ग
+import './RescheduleUpdate.css'; 
 
 const USER_ID = 1; // Demo user ID
 
 const RescheduleUpdate = () => {
-  const [payments, setPayments] = useState([]); // initialData काढून टाका, empty array set kara
+  const [payments, setPayments] = useState([]); // Remove initialData, empty array set
   const [editId, setEditId] = useState(null);
-  // 'date' ला 'due_date' मध्ये बदला, payee पण editData मध्ये असावे
+  // Change 'date' to 'due_date', payee should also be in editData
   const [editData, setEditData] = useState({ amount: '', due_date: '', method: '', payee: '' });
 
-  // FAILED payments fetch karanyasahti useEffect
+  // For FAILED payments fetch useEffect
   useEffect(() => {
     fetchFailedPayments();
   }, []);
 
   const fetchFailedPayments = () => {
-    api.get(`/failed-payments/${USER_ID}`) // नवा API endpoint call kara
+    api.get(`/failed-payments/${USER_ID}`) // New API endpoint call 
       .then(res => {
         // Res.data empty asel tar empty array set kara, ani jar 'FAILED' status nahiye tar filter kara
         const failedPayments = Array.isArray(res.data) ? res.data.filter(p => p.status === 'FAILED') : [];
@@ -34,7 +34,7 @@ const RescheduleUpdate = () => {
 
   const startEdit = (payment) => {
     setEditId(payment.id);
-    // 'due_date' ला 'date' च्या ऐवजी use करा, payee पण ऍड करा
+    // Use 'due_date' instead of 'date', add payee too.
     setEditData({ amount: payment.amount, due_date: payment.due_date, method: payment.method, payee: payment.payee });
   };
 
@@ -45,12 +45,12 @@ const RescheduleUpdate = () => {
   const saveUpdate = (id) => {
     // Backend API call karnyasathi logic ithe add kara
     api.put(`/payment/${id}`, { // Nava PUT endpoint call kara
-        amount: parseFloat(editData.amount), // amount ला float मध्ये convert करा
+        amount: parseFloat(editData.amount), // Convert amount to float
         due_date: editData.due_date,
         method: editData.method,
         // Payee update karaycha asel tar include kara, nahitar remove kara
         // payee: editData.payee,
-        status: 'SCHEDULED' // 'FAILED' status update झाल्यावर 'PENDING' kara
+        status: 'SCHEDULED' // 'FAILED' status update to 'PENDING'
     })
       .then(res => {
         alert('Payment updated successfully!');
@@ -75,7 +75,7 @@ const RescheduleUpdate = () => {
               <th>ID</th> {/* ID column add kara */}
               <th>Payee</th> {/* Payee column add kara */}
               <th>Amount</th>
-              <th>Due Date</th> {/* 'Date' ला 'Due Date' मध्ये बदला */}
+              <th>Due Date</th> {/* Change 'Date' to 'Due Date' */}
               <th>Method</th>
               <th>Status</th> {/* Status column add kara */}
               <th>Actions</th>
@@ -95,14 +95,14 @@ const RescheduleUpdate = () => {
                       onChange={handleChange}
                     />
                   ) : (
-                    `₹${payment.amount.toFixed(2)}` // amount ला दोन दशमान पर्यंत फॉरमॅट करा
+                    `₹${payment.amount.toFixed(2)}` // Format amount to two decimal places.
                   )}
                 </td>
                 <td>
                   {editId === payment.id ? (
                     <input
                       type="date"
-                      name="due_date" // name ला 'due_date' करा
+                      name="due_date" // Change name to 'due_date'
                       value={editData.due_date}
                       onChange={handleChange}
                     />

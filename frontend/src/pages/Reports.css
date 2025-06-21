@@ -60,11 +60,11 @@
   text-align: center;
 }
 
-/* टेबल स्क्रोलिंग आणि हेडर स्टिकी करण्यासाठी नवीन स्टाईल्स */
+/* New styles for table scrolling and header sticking */
 .table-container-scroll {
-  max-height: 400px; /* तुमच्या गरजेनुसार उंची ऍडजस्ट करा */
-  overflow-y: auto; /* उभ्या स्क्रोलसाठी */
-  overflow-x: auto; /* क्षैतिज स्क्रोलसाठी */
+  max-height: 400px; 
+  overflow-y: auto; 
+  overflow-x: auto; 
   border: 1px solid #e2e8f0;
   border-radius: 0.5rem;
   margin-top: 1.5rem;
@@ -82,10 +82,10 @@ table{
 
 .table-container-scroll thead {
   position: sticky;
-  top: 0; /* स्क्रोल करण्यायोग्य कंटेनरच्या (म्हणजे .table-container-scroll) शीर्षस्थानी चिकटवा */
-  background-color: #f1f5f9; /* हेडरची पार्श्वभूमी */
-  z-index: 10; /* सुनिश्चित करा की ते स्क्रोलिंग बॉडी कंटेंटच्या वर राहील */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* हलकी छाया */
+  top: 0; 
+  background-color: #f1f5f9; 
+  z-index: 10; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .table-container-scroll th,
@@ -93,12 +93,12 @@ table{
   padding: 12px 16px;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
-  white-space: nowrap; /* मजकूर एका ओळीत ठेवण्यासाठी */
-  overflow: hidden; /* जास्त मजकूर लपवण्यासाठी */
-  text-overflow: ellipsis; /* जास्त मजकूर असेल तर ... दाखवण्यासाठी */
+  white-space: nowrap; /* To keep text on one line */
+  overflow: hidden; /* To hide more text */
+  text-overflow: ellipsis; /* If there is too much text... to display */
 }
 
-/* प्रत्येक कॉलमसाठी रुंदी निश्चित करा */
+/* Set the width for each column. */
 .table-container-scroll th:nth-child(1), .table-container-scroll td:nth-child(1) { width: 5%; }  /* ID */
 .table-container-scroll th:nth-child(2), .table-container-scroll td:nth-child(2) { width: 15%; } /* Payee */
 .table-container-scroll th:nth-child(3), .table-container-scroll td:nth-child(3) { width: 10%; } /* Amount */

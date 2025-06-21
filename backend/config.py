@@ -17,7 +17,7 @@ MAIL_USERNAME = 'prasadpanchalps@gmail.com' # Sender Mail id
 MAIL_PASSWORD = 'yvkv bscs dzhk yiar'         # Sender App Password
 
 # You can keep these additional variables as per your convenience.
-HARDCODED_RECEIVER_EMAIL = 'gauravsonar260@gmail.com'  # Receiver Mail id
+HARDCODED_RECEIVER_EMAIL = 'prasadpanchal431@gmail.com'  # Receiver Mail id
 SENDER_EMAIL = 'prasadpanchalps@gmail.com' # Sender Mail 
 
 MAIL_DEFAULT_SENDER = 'prasadpanchalps@gmail.com' # Sender Mail

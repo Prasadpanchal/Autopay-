@@ -40,10 +40,10 @@ const Sidebar = ({ onLogout }) => { // onLogout प्रॉप इथे स्
         <span>Reports</span>
       </NavLink>
 
-      <NavLink to="/settings" className="sidebar-link" activeClassName="active" end>
+      {/* <NavLink to="/settings" className="sidebar-link" activeClassName="active" end>
         <FaCog className="icon" />
         <span>Settings</span>
-      </NavLink>
+      </NavLink> */}
 
       {/* Logout बटण - NavLink ऐवजी साधा बटण वापरा आणि onClick वर onLogout फंक्शन कॉल करा */}
       <button onClick={onLogout} className="sidebar-link logout"> {/* onClick वर onLogout फंक्शन कॉल करा */}
