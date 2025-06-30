@@ -1,0 +1,29 @@
+# Python specific files and folders
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Database specific files (if any local database files like sqlite)
+*.db
+*.sqlite
+/instance/
+
+# Flask-Migrate specific compiled files (already covered by *.pyc but good to be explicit)
+/migrations/versions/*.pyc
+
+# Environment variables (sensitive information)
+.env
+
+# Logs
+*.log
+logs/
+
+# Editor specific files
+.vscode/
+.idea/
