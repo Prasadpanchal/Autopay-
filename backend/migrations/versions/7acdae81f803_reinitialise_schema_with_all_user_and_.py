@@ -1,8 +1,8 @@
-"""Initial setup with full auth and OTP features
+"""Reinitialise schema with all user and payment fields
 
-Revision ID: 4e1743bef8e2
+Revision ID: 7acdae81f803
 Revises: 
-Create Date: 2025-06-29 22:56:38.155966
+Create Date: 2025-06-30 17:47:56.893561
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4e1743bef8e2'
+revision = '7acdae81f803'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,10 +29,13 @@ def upgrade():
     sa.Column('otp_code', sa.String(length=6), nullable=True),
     sa.Column('otp_expiry', sa.DateTime(), nullable=True),
     sa.Column('otp_verified', sa.Boolean(), server_default=sa.text('false'), nullable=False),
+    sa.Column('reset_token', sa.String(length=128), nullable=True),
+    sa.Column('reset_token_expiry', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
+    sa.UniqueConstraint('phone_number'),
+    sa.UniqueConstraint('reset_token')
     )
     op.create_table('payments',
     sa.Column('id', sa.Integer(), nullable=False),

@@ -2,24 +2,28 @@
 
 from . import db
 from datetime import datetime
-from sqlalchemy import text # server_default साठी
+from sqlalchemy import text
 
 class User(db.Model):
-    __tablename__ = 'users' # तुमच्या DB मधील 'users' टेबलच्या नावानुसार
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False) # लांबी 256 आहे याची खात्री करा
+    password_hash = db.Column(db.String(256), nullable=False)
     
-    bank_name = db.Column(db.String(100), nullable=True) # nullable करा किंवा default द्या
+    bank_name = db.Column(db.String(100), nullable=True)
     balance = db.Column(db.Numeric(10, 2), nullable=False, default=0.0)
 
-    # OTP संबंधित फील्ड्स
-    otp_code = db.Column(db.String(6), nullable=True) # OTP साठी
-    otp_expiry = db.Column(db.DateTime, nullable=True) # OTP ची वैधता (expiry)
-    otp_verified = db.Column(db.Boolean, nullable=False, default=False, server_default=text('false')) # OTP द्वारे सत्यापित आहे का
+    # OTP related fields (for signup and general verification)
+    otp_code = db.Column(db.String(6), nullable=True)
+    otp_expiry = db.Column(db.DateTime, nullable=True)
+    otp_verified = db.Column(db.Boolean, nullable=False, default=False, server_default=text('false'))
+
+    # NEW: Password Reset Token fields for link-based reset
+    reset_token = db.Column(db.String(128), nullable=True, unique=True) # Unique token for password reset
+    reset_token_expiry = db.Column(db.DateTime, nullable=True) # Expiry for the reset token
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -28,12 +32,11 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-# Payment मॉडेल (तुमच्याकडे आधीच असेल)
 class Payment(db.Model):
-    __tablename__ = 'payments' # तुमच्या DB मधील 'payments' टेबलच्या नावानुसार
+    __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # 'user.id' ऐवजी 'users.id' (जर टेबलचे नाव 'users' असेल)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     payee = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     due_date = db.Column(db.Date, nullable=False)

@@ -1,20 +1,26 @@
-// File: src/pages/Login.js
+// File: frontend/src/pages/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// assuming api.js is in src/api.js, adjust path if necessary
 import api from '../../src/api'; 
 import './Login.css';
 
 const Login = ({ onLogin }) => {
-  const [isLogin, setIsLogin] = useState(true); // State to toggle between login and signup
+  const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState(''); // For signup
-  const [phoneNumber, setPhoneNumber] = useState(''); // For signup
-  const [otpSent, setOtpSent] = useState(false); // State for OTP sent status
-  const [otpCode, setOtpCode] = useState(''); // State for OTP input
-  const [message, setMessage] = useState(''); // For displaying success/error messages
-  const [isError, setIsError] = useState(false); // To style messages
+  const [fullName, setFullName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  // Removed states for bankName and initialBalance
+  // const [bankName, setBankName] = useState('');
+  // const [initialBalance, setInitialBalance] = useState('');
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -23,8 +29,11 @@ const Login = ({ onLogin }) => {
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone);
   const validatePassword = (pass) => /^\d{6}$/.test(pass); // 6 digits only
+  // Removed validation functions for bankName and initialBalance
+  // const validateBankName = (name) => name.trim().length > 0;
+  // const validateInitialBalance = (balance) => !isNaN(parseFloat(balance)) && parseFloat(balance) >= 0;
 
-  // Function to handle sending OTP
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -45,7 +54,7 @@ const Login = ({ onLogin }) => {
       const res = await api.post('/send-otp', { email, phone_number: phoneNumber });
       setMessage(res.data.message || 'OTP sent to your email.');
       setIsError(false);
-      setOtpSent(true); // Indicate that OTP has been sent
+      setOtpSent(true);
     } catch (err) {
       console.error('Send OTP error:', err.response || err);
       setMessage(err.response?.data?.message || 'Failed to send OTP. Please try again.');
@@ -53,7 +62,7 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  // Function to handle OTP verification and then signup
+
   const handleVerifyOtpAndSignup = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -71,52 +80,46 @@ const Login = ({ onLogin }) => {
     }
 
     try {
-      // Step 1: Verify OTP
       const verifyRes = await api.post('/verify-otp', { email, otp_code: otpCode });
       setMessage(verifyRes.data.message || 'OTP verified successfully!');
       setIsError(false);
-      // setOtpVerified(true); // No need for this state as we proceed to signup immediately
+
+      // Client-side validations for signup data
+      if (!validateFullName(fullName)) { setMessage('Full Name must contain only alphabets and spaces.'); setIsError(true); return; }
+      if (!validateEmail(email)) { setMessage('Please enter a valid email address.'); setIsError(true); return; }
+      if (!validatePhoneNumber(phoneNumber)) { setMessage('Please enter a valid 10-digit phone number.'); setIsError(true); return; }
+      if (!validatePassword(password)) { setMessage('Password must be a 6-digit number.'); setIsError(true); return; }
+      // Removed client-side validations for bankName and initialBalance
+      // if (!validateBankName(bankName)) { setMessage('Please enter a valid Bank Name.'); setIsError(true); return; }
+      // if (!validateInitialBalance(initialBalance)) { setMessage('Please enter a valid non-negative initial balance.'); setIsError(true); return; }
+
 
       // Step 2: Proceed with Signup after successful OTP verification
-      // Perform client-side validations again before sending signup data
-      if (!validateFullName(fullName)) {
-        setMessage('Full Name must contain only alphabets and spaces.');
-        setIsError(true);
-        return;
-      }
-      if (!validateEmail(email)) {
-        setMessage('Please enter a valid email address.');
-        setIsError(true);
-        return;
-      }
-      if (!validatePhoneNumber(phoneNumber)) {
-        setMessage('Please enter a valid 10-digit phone number.');
-        setIsError(true);
-        return;
-      }
-      if (!validatePassword(password)) {
-        setMessage('Password must be a 6-digit number.');
-        setIsError(true);
-        return;
-      }
-
       const signupRes = await api.post('/signup', {
         fullName,
         email,
         phoneNumber,
         password,
+        // Removed bankName and balance from payload
+        // bankName,
+        // balance: parseFloat(initialBalance)
       });
 
       setMessage(signupRes.data.message || 'Signup successful! Please login.');
       setIsError(false);
-      setIsLogin(true); // Switch to login form after successful signup
+      setIsLogin(true);
+      
       // Clear all fields after successful signup
       setEmail('');
       setPassword('');
       setFullName('');
       setPhoneNumber('');
+      // Removed clearing states for bankName and initialBalance
+      // setBankName('');
+      // setInitialBalance('');
       setOtpCode('');
       setOtpSent(false);
+
     } catch (err) {
       console.error('Signup/OTP verification error:', err.response || err);
       setMessage(err.response?.data?.message || 'Signup or OTP verification failed. Please try again.');
@@ -124,7 +127,6 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  // Function to handle Login submission
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -141,12 +143,11 @@ const Login = ({ onLogin }) => {
       setMessage(res.data.message || 'Login successful!');
       setIsError(false);
       
-      // Store user ID and name (full_name) in localStorage
       localStorage.setItem('user_id', res.data.user_id);
-      localStorage.setItem('username', res.data.username); // Assuming 'username' key for full_name
+      localStorage.setItem('username', res.data.username);
 
-      if (onLogin) onLogin(); // Call onLogin prop if provided
-      navigate('/dashboard'); // Redirect to dashboard
+      if (onLogin) onLogin();
+      navigate('/dashboard');
     } catch (err) {
       console.error('Login error:', err.response || err);
       setMessage(err.response?.data?.message || 'Login failed. Invalid email or password.');
@@ -154,23 +155,57 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  // Function to toggle between Login and Signup forms
-  const toggleForm = () => {
-    setIsLogin((prevIsLogin) => !prevIsLogin);
-    // Clear all form states when toggling
+  const handleForgotPasswordSendLink = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    setIsError(false);
+    setOtpSent(false);
+
+    if (!validateEmail(email)) {
+      setMessage('Please enter a valid email address.');
+      setIsError(true);
+      return;
+    }
+
+    try {
+      const res = await api.post('/forgot-password-link', { email });
+      setMessage(res.data.message || 'If an account exists, a password reset link has been sent to your email.');
+      setIsError(false);
+    } catch (err) {
+      console.error('Forgot password send link error:', err.response || err);
+      setMessage(err.response?.data?.message || 'Failed to send password reset link. Please try again.');
+      setIsError(true);
+    }
+  };
+
+
+  const toggleForm = (formType) => {
     setEmail('');
     setPassword('');
     setFullName('');
     setPhoneNumber('');
+    // Removed clearing states for bankName and initialBalance
+    // setBankName('');
+    // setInitialBalance('');
     setOtpCode('');
     setOtpSent(false);
     setMessage('');
     setIsError(false);
+
+    if (formType === 'login') {
+      setIsLogin(true);
+      setIsForgotPassword(false);
+    } else if (formType === 'signup') {
+      setIsLogin(false);
+      setIsForgotPassword(false);
+    } else if (formType === 'forgotPassword') {
+      setIsLogin(false);
+      setIsForgotPassword(true);
+    }
   };
 
   return (
     <div className="login-page-wrapper">
-      {/* Welcome/Feature Message section on the left side*/}
       <div className="login-info-section">
         <h1 className="info-title">Simplify Your Payments with AutoPay</h1>
         <ul className="info-list">
@@ -181,9 +216,11 @@ const Login = ({ onLogin }) => {
         <p className="info-tagline">Your trusted partner for seamless financial management.</p>
       </div>
 
-      {/* Right-side login/signup form container*/}
       <div className="login-container">
-        <h2>{isLogin ? 'Login to AutoPay' : 'Sign Up for AutoPay'}</h2>
+        {/* Conditional rendering for form titles */}
+        {isLogin ? <h2>Login to AutoPay</h2> : 
+         isForgotPassword ? <h2>Forgot Password?</h2> : 
+         <h2>Sign Up for AutoPay</h2>}
         
         {/* Display messages */}
         {message && (
@@ -192,7 +229,7 @@ const Login = ({ onLogin }) => {
           </p>
         )}
 
-        {isLogin ? (
+        {isLogin && (
           /* Login Form */
           <form onSubmit={handleLoginSubmit}>
             <input
@@ -213,19 +250,26 @@ const Login = ({ onLogin }) => {
               required
             />
             <button id='submit' type="submit">Login</button>
+            <p className="toggle-form-text">
+              <span className="toggle-link" onClick={() => toggleForm('forgotPassword')}>
+                Forgot Password?
+              </span>
+            </p>
           </form>
-        ) : (
+        )}
+
+        {!isLogin && !isForgotPassword && (
           /* Signup Form */
           <form onSubmit={otpSent ? handleVerifyOtpAndSignup : handleSendOtp}>
             <input
               type="text"
-              placeholder="Full Name"
+              placeholder="Full Name (Alphabets only)"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
               pattern="[a-zA-Z\s]+"
               title="Full Name must contain only alphabets and spaces"
-              readOnly={otpSent} /* Disable after OTP sent */
+              readOnly={otpSent}
             />
             <input
               type="email"
@@ -233,18 +277,18 @@ const Login = ({ onLogin }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              readOnly={otpSent} /* Disable after OTP sent */
+              readOnly={otpSent}
             />
             <input
               type="tel"
-              placeholder="Phone Number"
+              placeholder="Phone Number (10 digits)"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               maxLength="10"
               pattern="\d{10}"
               title="Phone number must be a 10-digit number"
               required
-              readOnly={otpSent} /* Disable after OTP sent */
+              readOnly={otpSent}
             />
             <input
               type="password"
@@ -255,12 +299,10 @@ const Login = ({ onLogin }) => {
               pattern="\d{6}"
               title="Password must be a 6-digit number"
               required
-              readOnly={otpSent} /* Disable after OTP sent */
+              readOnly={otpSent}
             />
 
-            {!otpSent ? (
-              <button type="submit" className="otp-button">Send OTP</button>
-            ) : (
+            {otpSent && (
               <>
                 <input
                   type="text"
@@ -272,17 +314,75 @@ const Login = ({ onLogin }) => {
                   title="OTP must be a 6-digit number"
                   required
                 />
-                <button type="submit" className="otp-button">Verify OTP & Sign Up</button>
+                {/* Removed Bank Name and Initial Balance inputs */}
+                {/* <input
+                  type="text"
+                  placeholder="Bank Name (e.g., State Bank of India)"
+                  value={bankName}
+                  onChange={(e) => setBankName(e.target.value)}
+                  required={otpSent}
+                />
+                <input
+                  type="number"
+                  placeholder="Initial Balance (e.g., 5000.00)"
+                  value={initialBalance}
+                  onChange={(e) => setInitialBalance(e.target.value)}
+                  required={otpSent}
+                  min="0"
+                />
+                */}
               </>
+            )}
+
+            {!otpSent ? (
+              <button type="submit" className="otp-button">Send OTP</button>
+            ) : (
+              <button type="submit" className="otp-button">Verify OTP & Sign Up</button>
             )}
           </form>
         )}
 
+        {isForgotPassword && (
+          /* Forgot Password - Send Link Form */
+          <form onSubmit={handleForgotPasswordSendLink}>
+            <input
+              type="email"
+              placeholder="Enter your registered Email ID"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <button type="submit" className="otp-button">Send Reset Link</button>
+          </form>
+        )}
+
         <p className="toggle-form-text">
-          {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
-          <span className="toggle-link" onClick={toggleForm}>
-            {isLogin ? 'Sign Up here' : 'Login here'}
-          </span>
+          {isLogin && !isForgotPassword && ( // Login page
+            <>
+              {"Don't have an account? "}
+              <span className="toggle-link" onClick={() => toggleForm('signup')}>
+                Sign Up here
+              </span>
+            </>
+          )}
+
+          {!isLogin && !isForgotPassword && ( // Signup page
+            <>
+              {"Already have an account? "}
+              <span className="toggle-link" onClick={() => toggleForm('login')}>
+                Login here
+              </span>
+            </>
+          )}
+
+          {isForgotPassword && ( // Forgot Password page
+            <>
+              {"Go back to "}
+              <span className="toggle-link" onClick={() => toggleForm('login')}>
+                Login here
+              </span>
+            </>
+          )}
         </p>
       </div>
     </div>
