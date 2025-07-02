@@ -15,6 +15,11 @@ import secrets
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
+# --- Temporary storage for bank verification OTPs (NOT FOR PRODUCTION) ---
+# Key: email, Value: {'otp': '123456', 'expiry': datetime_object}
+bank_otp_storage = {}
+# --- End of Temporary storage ---
+
 # --- Email Utility Function ---
 def send_notification_email(recipient_email, subject, body):
     """Sends email notifications."""
@@ -66,7 +71,7 @@ def send_otp():
                 otp_code=otp,
                 otp_expiry=otp_expiry_time,
                 otp_verified=False,
-                bank_name='N/A', # Default value for new temporary users
+                # Removed bank_name and account_number from new user creation
                 balance=0.0 # Default value for new temporary users
             )
             db.session.add(new_user)
@@ -215,8 +220,6 @@ def signup():
     email = data.get('email')
     phone_number = data.get('phoneNumber')
     password = data.get('password')
-    # Removed bank_name = data.get('bankName')
-    # Removed balance = data.get('balance')
 
     if not all([full_name, email, phone_number, password]):
         return jsonify({'message': 'All fields (Full Name, Email, Phone Number, Password) are required'}), 400
@@ -252,10 +255,7 @@ def signup():
         user_to_update.otp_code = None
         user_to_update.otp_expiry = None
         
-        # Default values for bank_name and balance are now always set here,
-        # they are no longer derived from the request payload.
-        if user_to_update.bank_name is None:
-            user_to_update.bank_name = 'N/A'
+        # Removed setting default bank_name and account_number here
         if user_to_update.balance is None:
             user_to_update.balance = 0.0
 
@@ -315,7 +315,7 @@ def login():
 
 
 # ----------------------------------------------------
-# User API Routes (Updated to include PUT method for Bank Registration)
+# User API Routes (Updated to reflect no bank details in PostgreSQL User model)
 # ----------------------------------------------------
 @api.route('/user/<int:user_id>', methods=['GET'])
 def get_user_data(user_id):
@@ -327,8 +327,8 @@ def get_user_data(user_id):
             'name': user.full_name,
             'email': user.email,
             'phone_number': user.phone_number,
-            'bankName': user.bank_name,
-            'balance': float(user.balance),
+            # Removed bankName and accountNumber from here
+            'balance': float(user.balance), # This is the AutoPay wallet balance
             'failed_payments_count': failed_payments_count
         }
         return jsonify(user_data), 200
@@ -343,8 +343,7 @@ def update_user_bank_details(user_id):
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
-    if 'bankName' in data:
-        user.bank_name = data['bankName']
+    # Removed logic for updating bankName and accountNumber
     if 'balance' in data:
         try:
             new_balance = float(data['balance'])
@@ -356,20 +355,101 @@ def update_user_bank_details(user_id):
 
     try:
         db.session.commit()
+        # Return only the relevant updated user data
         return jsonify({
-            'message': 'Bank details updated successfully!',
+            'message': 'User data updated successfully!',
             'user': {
                 'id': user.id,
                 'name': user.full_name,
                 'email': user.email,
-                'bankName': user.bank_name,
                 'balance': float(user.balance)
             }
         }), 200
     except Exception as e:
         db.session.rollback()
-        print(f"Error updating user bank details: {e}")
-        return jsonify({'message': 'Internal server error while updating bank details'}), 500
+        print(f"Error updating user details: {e}")
+        return jsonify({'message': 'Internal server error while updating user details'}), 500
+
+# Endpoint to deposit funds into dummy bank balance (This updates AutoPay wallet balance)
+@api.route('/deposit-balance/<int:user_id>', methods=['POST'])
+def deposit_balance(user_id):
+    data = request.get_json()
+    amount = data.get('amount')
+
+    if not amount or not isinstance(amount, (int, float)) or amount <= 0:
+        return jsonify({'message': 'Valid positive amount is required for deposit'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    try:
+        user.balance += float(amount)
+        db.session.commit()
+        return jsonify({
+            'message': f'Successfully deposited {amount:.2f} into your account. New balance: {user.balance:.2f}',
+            'new_balance': float(user.balance)
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error depositing balance for user {user_id}: {e}")
+        return jsonify({'message': 'Failed to deposit balance. Internal error.'}), 500
+
+# NEW: Endpoint to send OTP for bank verification
+@api.route('/send-bank-otp', methods=['POST'])
+def send_bank_otp():
+    data = request.get_json()
+    email_id = data.get('email_id')
+
+    if not email_id:
+        return jsonify({'message': 'Email ID is required to send OTP for bank verification'}), 400
+
+    otp = str(random.randint(100000, 999999))
+    otp_expiry_time = datetime.utcnow() + timedelta(minutes=5)
+
+    # Store OTP temporarily (for demo purposes)
+    bank_otp_storage[email_id] = {'otp': otp, 'expiry': otp_expiry_time}
+    print(f"Bank verification OTP generated for {email_id}: {otp}. Stored in temporary storage.")
+
+    subject = "AutoPay: Bank Account Verification OTP"
+    body = (
+        f"Hello,\n\nYour One-Time Password (OTP) for bank account verification on AutoPay is: {otp}\n\n"
+        f"This OTP is valid for 5 minutes.\n\n"
+        f"If you did not request this, please ignore this email.\n\n"
+        f"Thank you,\nAutoPay Team"
+    )
+    send_notification_email(email_id, subject, body)
+
+    return jsonify({'message': 'OTP sent to registered email ID for bank verification.'}), 200
+
+# NEW: Endpoint to verify OTP for bank connection
+@api.route('/verify-bank-otp', methods=['POST'])
+def verify_bank_otp():
+    data = request.get_json()
+    email_id = data.get('email_id')
+    otp_code = data.get('otp_code')
+
+    if not email_id or not otp_code:
+        return jsonify({'message': 'Email ID and OTP are required for verification'}), 400
+
+    stored_otp_info = bank_otp_storage.get(email_id)
+
+    if not stored_otp_info:
+        return jsonify({'message': 'Invalid or expired OTP. Please request a new one.'}), 400
+
+    if datetime.utcnow() > stored_otp_info['expiry']:
+        del bank_otp_storage[email_id] # Clear expired OTP
+        return jsonify({'message': 'OTP has expired. Please request a new one.'}), 400
+
+    if stored_otp_info['otp'] != otp_code:
+        return jsonify({'message': 'Invalid OTP. Please try again.'}), 400
+    
+    # OTP is valid, remove it from storage
+    del bank_otp_storage[email_id]
+    print(f"Bank verification OTP successfully verified for {email_id}.")
+
+    return jsonify({'message': 'Bank OTP verified successfully!'}), 200
+
 
 # --- NEW AI-RELATED ENDPOINT: Predict Bill ---
 @api.route('/predict-bill/<int:user_id>', methods=['POST'])

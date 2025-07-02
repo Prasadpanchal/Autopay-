@@ -1,0 +1,146 @@
+/* File: frontend/src/pages/ProfilePage.css */
+
+.profile-page-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.profile-page-container h2 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+.profile-page-container .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.profile-page-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.profile-page-container input[type="tel"],
+.profile-page-container input[type="text"],
+.profile-page-container select { /* Added select for styling */
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    background-color: #fff; /* Ensure select has white background */
+}
+
+.profile-page-container input[type="tel"]:focus,
+.profile-page-container input[type="text"]:focus,
+.profile-page-container select:focus {
+    border-color: #6a5acd;
+    outline: none;
+}
+
+.connect-button {
+    background: linear-gradient(45deg, #6a5acd, #9370db);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.connect-button:hover {
+    background: linear-gradient(45deg, #5a4ac9, #8260d0);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-button {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.back-button:hover {
+    background-color: #e0e0e0;
+    border-color: #bbb;
+}
+
+.form-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.form-message.success {
+    background-color: #e6ffe6;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.form-message.error {
+    background-color: #ffe6e6;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.otp-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.bank-connected-success {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #e6ffe6;
+    border: 1px solid #d6e9c6;
+    border-radius: 12px;
+    color: #3c763d;
+}
+
+.bank-connected-success h3 {
+    color: #28a745;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+.bank-connected-success p {
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .profile-page-container {
+        margin: 20px;
+        padding: 20px;
+    }
+    .profile-page-container h2 {
+        font-size: 1.5em;
+    }
+    .connect-button, .back-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}

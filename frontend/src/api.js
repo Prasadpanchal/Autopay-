@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { db } from './firebaseConfig'; // Import db from firebaseConfig
 
 // Replace with your backend URL
 const api = axios.create({
@@ -6,3 +7,4 @@ const api = axios.create({
 });
 
 export default api;
+export { db }; // IMPORTANT: Export db for direct Firestore access

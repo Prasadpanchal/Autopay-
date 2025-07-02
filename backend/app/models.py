@@ -13,17 +13,15 @@ class User(db.Model):
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     
-    bank_name = db.Column(db.String(100), nullable=True)
-    balance = db.Column(db.Numeric(10, 2), nullable=False, default=0.0)
+    # Removed bank_name and account_number from User model
+    balance = db.Column(db.Numeric(10, 2), nullable=False, default=0.0) # User's internal AutoPay wallet balance
 
-    # OTP related fields (for signup and general verification)
     otp_code = db.Column(db.String(6), nullable=True)
     otp_expiry = db.Column(db.DateTime, nullable=True)
     otp_verified = db.Column(db.Boolean, nullable=False, default=False, server_default=text('false'))
 
-    # NEW: Password Reset Token fields for link-based reset
-    reset_token = db.Column(db.String(128), nullable=True, unique=True) # Unique token for password reset
-    reset_token_expiry = db.Column(db.DateTime, nullable=True) # Expiry for the reset token
+    reset_token = db.Column(db.String(128), nullable=True, unique=True)
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

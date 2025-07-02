@@ -1,55 +1,109 @@
-// src/components/Sidebar.js
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+// File: src/components/Sidebar.js
+import React, { useState, useEffect } from 'react'; // useState and useEffect for sidebar state
+import { NavLink, useLocation } from 'react-router-dom';
 import './Sidebar.css';
-import { FaTachometerAlt, FaCalendarAlt, FaListUl, FaRedo, FaCloudUploadAlt, FaChartBar, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaTachometerAlt, FaCalendarAlt, FaListUl, FaRedo, FaCloudUploadAlt, FaChartBar, FaCog, FaSignOutAlt, FaUser, FaMoneyBillWave } from 'react-icons/fa'; // Added FaUser for Profile, FaMoneyBillWave for Deposit Funds
 
-// onLogout प्रॉप स्वीकार करा
-const Sidebar = ({ onLogout }) => { // onLogout प्रॉप इथे स्वीकारला
+const Sidebar = ({ onLogout }) => {
+  // State to manage sidebar open/closed status, loaded from local storage
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    try {
+      const savedState = localStorage.getItem('sidebarOpen');
+      return savedState ? JSON.parse(savedState) : true; // Default to open if not found
+    } catch (error) {
+      console.error("Error parsing sidebarOpen from localStorage:", error);
+      return true; // Fallback to true on error
+    }
+  });
+
+  const location = useLocation(); // Get current location to highlight active link
+
+  // Save sidebar state to local storage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
+    } catch (error) {
+      console.error("Error saving sidebarOpen to localStorage:", error);
+    }
+  }, [sidebarOpen]);
+
+  // Function to toggle sidebar open/closed
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <div className="custom-sidebar">
-      <div className="sidebar-logo">AutoPay</div>
-
-      <NavLink to="/dashboard" className="sidebar-link" activeClassName="active" end>
-        <FaTachometerAlt className="icon" />
-        <span>Dashboard</span>
-      </NavLink>
-      
-      <NavLink to="/schedule-payment" className="sidebar-link" activeClassName="active" end>
-        <FaCalendarAlt className="icon" />
-        <span>Schedule Payment</span>
-      </NavLink>
-
-      <NavLink to="/payment-list" className="sidebar-link" activeClassName="active" end>
-        <FaListUl className="icon" />
-        <span>Payment List</span>
-      </NavLink>
-
-      <NavLink to="/reschedule-update" className="sidebar-link" activeClassName="active" end>
-        <FaRedo className="icon" />
-        <span>Reschedule/Update</span>
-      </NavLink>
-
-      <NavLink to="/bulk-upload" className="sidebar-link" activeClassName="active" end>
-        <FaCloudUploadAlt className="icon" />
-        <span>Bulk Upload</span>
-      </NavLink>
-
-      <NavLink to="/reports" className="sidebar-link" activeClassName="active" end>
-        <FaChartBar className="icon" />
-        <span>Reports</span>
-      </NavLink>
-
-      {/* <NavLink to="/settings" className="sidebar-link" activeClassName="active" end>
-        <FaCog className="icon" />
-        <span>Settings</span>
-      </NavLink> */}
-
-      {/* Logout बटण - NavLink ऐवजी साधा बटण वापरा आणि onClick वर onLogout फंक्शन कॉल करा */}
-      <button onClick={onLogout} className="sidebar-link logout"> {/* onClick वर onLogout फंक्शन कॉल करा */}
-        <FaSignOutAlt className="icon" />
-        <span>Logout</span>
-      </button>
+    <div className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+      <div className="sidebar-header">
+        {sidebarOpen && <h2>AutoPay</h2>} {/* Show title only when sidebar is open */}
+        <button onClick={toggleSidebar} className="toggle-button">
+          {sidebarOpen ? '❮' : '❯'} {/* Change icon based on sidebar state */}
+        </button>
+      </div>
+      <nav className="sidebar-nav">
+        <ul>
+          <li>
+            <NavLink to="/dashboard" className={location.pathname === '/dashboard' ? 'active' : ''}>
+              <FaTachometerAlt className="icon" />
+              {sidebarOpen && <span>Dashboard</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/profile" className={location.pathname === '/profile' ? 'active' : ''}>
+              <FaUser className="icon" /> {/* Profile Icon */}
+              {sidebarOpen && <span>Profile</span>}
+            </NavLink>
+          </li>
+          {/* <li>
+            <NavLink to="/deposit-funds" className={location.pathname === '/deposit-funds' ? 'active' : ''}>
+              <FaMoneyBillWave className="icon" /> 
+              {sidebarOpen && <span>Deposit Funds</span>}
+            </NavLink>
+          </li> */}
+          <li>
+            <NavLink to="/schedule-payment" className={location.pathname === '/schedule-payment' ? 'active' : ''}>
+              <FaCalendarAlt className="icon" />
+              {sidebarOpen && <span>Schedule Payment</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/payment-list" className={location.pathname === '/payment-list' ? 'active' : ''}>
+              <FaListUl className="icon" />
+              {sidebarOpen && <span>Payment List</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/reschedule-update" className={location.pathname === '/reschedule-update' ? 'active' : ''}>
+              <FaRedo className="icon" />
+              {sidebarOpen && <span>Reschedule/Update</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/bulk-upload" className={location.pathname === '/bulk-upload' ? 'active' : ''}>
+              <FaCloudUploadAlt className="icon" />
+              {sidebarOpen && <span>Bulk Upload</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/reports" className={location.pathname === '/reports' ? 'active' : ''}>
+              <FaChartBar className="icon" />
+              {sidebarOpen && <span>Reports</span>}
+            </NavLink>
+          </li>
+          {/* <li>
+            <NavLink to="/settings" className={location.pathname === '/settings' ? 'active' : ''}>
+              <FaCog className="icon" />
+              {sidebarOpen && <span>Settings</span>}
+            </NavLink>
+          </li> */}
+        </ul>
+      </nav>
+      <div className="sidebar-footer">
+        <button onClick={onLogout} className="logout-button">
+          <FaSignOutAlt className="icon" />
+          {sidebarOpen && <span>Logout</span>}
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-// src/App.js
+// File: frontend/src/App.js
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -10,7 +10,9 @@ import RescheduleUpdate from './pages/RescheduleUpdate';
 import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
 import Setting from './pages/Settings';
-import ResetPasswordPage from './pages/ResetPasswordPage'; // Import the new ResetPasswordPage
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import DepositFunds from './pages/DepositFunds'; // Import DepositFunds
+import ProfilePage from './pages/ProfilePage'; // Import ProfilePage
 import './App.css'; // Import App.css
 
 function App() {
@@ -67,12 +69,14 @@ function App() {
           {/* Public Routes - Always accessible */}
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} /> {/* NEW: Reset Password Page */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} /> {/* Reset Password Page */}
 
           {/* Protected Routes - Only accessible if isLoggedIn is true */}
           {isLoggedIn ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<ProfilePage />} /> {/* Profile Page Route */}
+              <Route path="/deposit-funds" element={<DepositFunds />} /> {/* Deposit Funds Route */}
               <Route path="/schedule-payment" element={<SchedulePayment />} />
               <Route path="/payment-list" element={<PaymentList />} />
               <Route path="/reschedule-update" element={<RescheduleUpdate />} />
