@@ -30,3 +30,7 @@ logs/
 
 # Firebase credentials
 backend/app/firebaseServiceAccountKey.json
+
+
+.env
+backend/app/firebaseServiceAccountKey.json
