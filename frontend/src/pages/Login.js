@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../src/api'; 
 import './Login.css';
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin }) => { // onLogin प्रॉप स्वीकारत आहे
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   
@@ -12,9 +12,6 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  // Removed states for bankName and initialBalance
-  // const [bankName, setBankName] = useState('');
-  // const [initialBalance, setInitialBalance] = useState('');
 
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
@@ -29,9 +26,6 @@ const Login = ({ onLogin }) => {
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePhoneNumber = (phone) => /^\d{10}$/.test(phone);
   const validatePassword = (pass) => /^\d{6}$/.test(pass); // 6 digits only
-  // Removed validation functions for bankName and initialBalance
-  // const validateBankName = (name) => name.trim().length > 0;
-  // const validateInitialBalance = (balance) => !isNaN(parseFloat(balance)) && parseFloat(balance) >= 0;
 
 
   const handleSendOtp = async (e) => {
@@ -89,9 +83,6 @@ const Login = ({ onLogin }) => {
       if (!validateEmail(email)) { setMessage('Please enter a valid email address.'); setIsError(true); return; }
       if (!validatePhoneNumber(phoneNumber)) { setMessage('Please enter a valid 10-digit phone number.'); setIsError(true); return; }
       if (!validatePassword(password)) { setMessage('Password must be a 6-digit number.'); setIsError(true); return; }
-      // Removed client-side validations for bankName and initialBalance
-      // if (!validateBankName(bankName)) { setMessage('Please enter a valid Bank Name.'); setIsError(true); return; }
-      // if (!validateInitialBalance(initialBalance)) { setMessage('Please enter a valid non-negative initial balance.'); setIsError(true); return; }
 
 
       // Step 2: Proceed with Signup after successful OTP verification
@@ -100,9 +91,6 @@ const Login = ({ onLogin }) => {
         email,
         phoneNumber,
         password,
-        // Removed bankName and balance from payload
-        // bankName,
-        // balance: parseFloat(initialBalance)
       });
 
       setMessage(signupRes.data.message || 'Signup successful! Please login.');
@@ -114,9 +102,6 @@ const Login = ({ onLogin }) => {
       setPassword('');
       setFullName('');
       setPhoneNumber('');
-      // Removed clearing states for bankName and initialBalance
-      // setBankName('');
-      // setInitialBalance('');
       setOtpCode('');
       setOtpSent(false);
 
@@ -143,11 +128,11 @@ const Login = ({ onLogin }) => {
       setMessage(res.data.message || 'Login successful!');
       setIsError(false);
       
-      localStorage.setItem('user_id', res.data.user_id);
-      localStorage.setItem('username', res.data.username);
-
-      if (onLogin) onLogin();
-      navigate('/dashboard');
+      // AuthContext च्या login फंक्शनला user_id आणि username पास करा
+      if (onLogin) {
+        onLogin(res.data.user_id, res.data.username); 
+      }
+      navigate('/dashboard'); // लॉगिन झाल्यावर डॅशबोर्डवर नेव्हिगेट करा
     } catch (err) {
       console.error('Login error:', err.response || err);
       setMessage(err.response?.data?.message || 'Login failed. Invalid email or password.');
@@ -184,9 +169,6 @@ const Login = ({ onLogin }) => {
     setPassword('');
     setFullName('');
     setPhoneNumber('');
-    // Removed clearing states for bankName and initialBalance
-    // setBankName('');
-    // setInitialBalance('');
     setOtpCode('');
     setOtpSent(false);
     setMessage('');
@@ -314,23 +296,6 @@ const Login = ({ onLogin }) => {
                   title="OTP must be a 6-digit number"
                   required
                 />
-                {/* Removed Bank Name and Initial Balance inputs */}
-                {/* <input
-                  type="text"
-                  placeholder="Bank Name (e.g., State Bank of India)"
-                  value={bankName}
-                  onChange={(e) => setBankName(e.target.value)}
-                  required={otpSent}
-                />
-                <input
-                  type="number"
-                  placeholder="Initial Balance (e.g., 5000.00)"
-                  value={initialBalance}
-                  onChange={(e) => setInitialBalance(e.target.value)}
-                  required={otpSent}
-                  min="0"
-                />
-                */}
               </>
             )}
 

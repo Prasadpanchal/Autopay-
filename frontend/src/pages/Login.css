@@ -3,19 +3,18 @@
 /* General Wrapper for the whole page */
 .login-page-wrapper {
   display: flex;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100%;
   align-items: center;
   justify-content: center;
-  background-color: #f0f2f5; /* Light grey background */
-  font-family: 'Inter', sans-serif; /* Recommended font */
+  font-family: 'Inter', sans-serif;
   padding: 20px;
-  box-sizing: border-box; /* Include padding in element's total width and height */
+  box-sizing: border-box;
 }
 
 /* Left Section: Welcome and Features */
 .login-info-section {
   flex: 1; /* Takes available space */
-  max-width: 500px; /* Max width for consistency */
+  max-width: 43%; /* Max width for consistency */
   padding: 40px;
   text-align: left;
   color: #333; /* Dark grey text */
@@ -59,7 +58,7 @@
 .login-container {
   background-color: #ffffff; /* White background for the form */
   padding: 40px;
-  border-radius: 12px; /* Rounded corners */
+  border-radius: 52px; /* Rounded corners */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
   text-align: center;
   width: 100%;
@@ -88,8 +87,9 @@
 .login-container input[type="password"] {
   width: 100%;
   padding: 15px;
-  border: 1px solid #e2e8f0; /* Light grey border */
-  border-radius: 8px;
+  border: 1px solid #E0E0FF; /* Light grey border */
+  background-color: #f1f1f1;
+  border-radius: 27px;
   font-size: 1rem;
   color: #333;
   box-sizing: border-box;

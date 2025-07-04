@@ -1,6 +1,6 @@
 # File: backend/app/models.py
 
-from . import db
+from app import db
 from datetime import datetime
 from sqlalchemy import text
 
@@ -13,8 +13,7 @@ class User(db.Model):
     phone_number = db.Column(db.String(20), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     
-    # Removed bank_name and account_number from User model
-    balance = db.Column(db.Numeric(10, 2), nullable=False, default=0.0) # User's internal AutoPay wallet balance
+    # 'balance' column removed from User model, as it will be managed in Firebase Firestore
 
     otp_code = db.Column(db.String(6), nullable=True)
     otp_expiry = db.Column(db.DateTime, nullable=True)

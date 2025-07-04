@@ -1,5 +1,5 @@
 // File: frontend/src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -11,54 +11,42 @@ import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
 import Setting from './pages/Settings';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import DepositFunds from './pages/DepositFunds'; // Import DepositFunds
-import ProfilePage from './pages/ProfilePage'; // Import ProfilePage
-import './App.css'; // Import App.css
+import DepositFunds from './pages/DepositFunds'; 
+import ProfilePage from './pages/ProfilePage'; 
+import './App.css'; 
+import { AuthContext } from './context/AuthContext'; // AuthContext इम्पोर्ट करा
 
 function App() {
-  // Load the isLoggedIn state from local storage.
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    try {
-      const savedState = localStorage.getItem('isLoggedIn');
-      return savedState ? JSON.parse(savedState) : false;
-    } catch (error) {
-      console.error("Error parsing isLoggedIn from localStorage:", error);
-      return false;
-    }
-  });
+  // AuthContext मधून isAuthenticated, loading, logout, आणि login फंक्शन्स वापरा
+  const { isAuthenticated, loading, logout, login } = useContext(AuthContext); 
 
-  const location = useLocation(); // To get the current path
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const location = useLocation(); 
+  const navigate = useNavigate(); 
 
-  // Store in local storage when isLoggedIn state changes
-  useEffect(() => {
-    try {
-      localStorage.setItem('isLoggedIn', JSON.stringify(isLoggedIn));
-    } catch (error) {
-      console.error("Error saving isLoggedIn to localStorage:", error);
-    }
-  }, [isLoggedIn]);
-
-  // Function to call when login is successful
-  const handleLogin = () => {
-    setIsLoggedIn(true);
+  // handleLogin फंक्शन आता AuthContext च्या login फंक्शनला कॉल करेल
+  const handleLogin = (userId, username) => {
+    login(userId, username); // AuthContext मधील login फंक्शन कॉल करा
+    // लॉगिन झाल्यावर Dashboard वर नेव्हिगेट करणे Login कंपोनेंटमध्येच केले पाहिजे, App.js मध्ये नाही.
   };
 
-  // Function to logout
-  const handleLogout = async () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('sidebarOpen');
-    localStorage.removeItem('user_id'); // Ensure user_id is also cleared on logout
-    localStorage.removeItem('username'); // Ensure username is also cleared on logout
-    
+  // handleLogout फंक्शन AuthContext च्या logout फंक्शनला कॉल करेल
+  const handleLogout = () => {
+    logout(); // AuthContext मधील logout फंक्शन कॉल करा
     navigate('/login');
   };
 
+  // AuthContext च्या loading स्टेटवर आधारित लोडिंग स्क्रीन दाखवा
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <p className="text-xl text-gray-700">Loading application...</p>
+      </div>
+    );
+  }
+
   // Logic to determine whether to show the sidebar
-  // The sidebar will only be visible if the user is logged in and not on specific public paths.
-  const publicPaths = ['/', '/login', '/reset-password']; // Add '/reset-password' to public paths
-  const showSidebar = isLoggedIn && !publicPaths.includes(location.pathname);
+  const publicPaths = ['/', '/login', '/reset-password']; 
+  const showSidebar = isAuthenticated && !publicPaths.includes(location.pathname); 
 
   return (
     <div className="app-container">
@@ -67,28 +55,27 @@ function App() {
       <div className={showSidebar ? "app-main-content" : "app-main-content-no-sidebar"}>
         <Routes>
           {/* Public Routes - Always accessible */}
+          {/* Login कंपोनेंटला onLogin प्रॉप पास करा, जे AuthContext च्या login फंक्शनला कॉल करेल */}
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} /> {/* Reset Password Page */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} /> 
 
-          {/* Protected Routes - Only accessible if isLoggedIn is true */}
-          {isLoggedIn ? (
+          {/* Protected Routes - Only accessible if isAuthenticated is true */}
+          {isAuthenticated ? ( 
             <>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<ProfilePage />} /> {/* Profile Page Route */}
-              <Route path="/deposit-funds" element={<DepositFunds />} /> {/* Deposit Funds Route */}
+              <Route path="/profile" element={<ProfilePage />} /> 
+              <Route path="/deposit-funds" element={<DepositFunds />} /> 
               <Route path="/schedule-payment" element={<SchedulePayment />} />
               <Route path="/payment-list" element={<PaymentList />} />
               <Route path="/reschedule-update" element={<RescheduleUpdate />} />
               <Route path="/bulk-upload" element={<BulkUpload />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Setting />} />
-              {/* Fallback for any other protected route if logged in */}
               <Route path="*" element={<Dashboard />} /> 
             </>
           ) : (
-            // If not logged in and trying to access a protected route, redirect to /login
-            // This catches all other paths not explicitly defined as public
+            // If not authenticated and trying to access a protected route, redirect to /login
             <Route path="*" element={<Login onLogin={handleLogin} />} />
           )}
         </Routes>

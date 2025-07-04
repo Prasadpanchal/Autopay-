@@ -3,7 +3,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #ece8ff; 
+  background-color: #E0E0FF; 
   overflow-x: hidden;
 }
 
@@ -20,6 +20,7 @@ body {
   margin-left: 240px; 
   padding: 20px;
   flex: 1;
+  background-color: #E0E0FF;
   width: calc(100% - 240px);
   box-sizing: border-box;
   overflow-y: auto;
@@ -34,6 +35,7 @@ body {
   box-sizing: border-box;
   min-height: 100vh;
   display: flex;
+  background-color: #E0E0FF;
   justify-content: center;
   align-items: center;
 }

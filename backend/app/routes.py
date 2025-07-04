@@ -13,6 +13,22 @@ import random
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 
+# --- Firebase Admin SDK Imports and Initialization ---
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+# Initialize Firebase Admin SDK if not already initialized
+try:
+    firebase_admin.get_app()
+except ValueError:
+    # तुमच्या firebaseServiceAccountKey.json फाईलचा योग्य पाथ द्या
+    cred = credentials.Certificate('app/firebaseServiceAccountKey.json') 
+    firebase_admin.initialize_app(cred)
+
+firestore_db = firestore.client() 
+# --- End Firebase Admin SDK Initialization ---
+
+
 api = Blueprint('api', __name__, url_prefix='/api')
 
 # --- Temporary storage for bank verification OTPs (NOT FOR PRODUCTION) ---
@@ -71,8 +87,7 @@ def send_otp():
                 otp_code=otp,
                 otp_expiry=otp_expiry_time,
                 otp_verified=False,
-                # Removed bank_name and account_number from new user creation
-                balance=0.0 # Default value for new temporary users
+                # 'balance' field is removed from User model, so no default here
             )
             db.session.add(new_user)
             print(f"New temporary user created for OTP: {email}. OTP: {otp}")
@@ -255,9 +270,9 @@ def signup():
         user_to_update.otp_code = None
         user_to_update.otp_expiry = None
         
-        # Removed setting default bank_name and account_number here
-        if user_to_update.balance is None:
-            user_to_update.balance = 0.0
+        # 'balance' field is removed from User model, so no default here
+        # if user_to_update.balance is None:
+        #     user_to_update.balance = 0.0
 
         if not user_to_update.id:
             db.session.add(user_to_update)
@@ -327,8 +342,8 @@ def get_user_data(user_id):
             'name': user.full_name,
             'email': user.email,
             'phone_number': user.phone_number,
-            # Removed bankName and accountNumber from here
-            'balance': float(user.balance), # This is the AutoPay wallet balance
+            # 'balance' field is removed from User model, so do not try to access it here.
+            # Bank balance will be fetched directly from Firebase in the frontend.
             'failed_payments_count': failed_payments_count
         }
         return jsonify(user_data), 200
@@ -683,6 +698,8 @@ def bulk_upload_payments():
 
 @api.route('/process-due-payments', methods=['POST'])
 def process_due_payments_route():
+    # हे फंक्शन scheduler द्वारे आणि मॅन्युअली दोन्ही कॉल केले जाते.
+    # येथे current_app पास करणे आवश्यक आहे कारण scheduler ला app context ची गरज असते.
     return process_due_payments(current_app)
 
 def process_due_payments(app):
@@ -690,63 +707,138 @@ def process_due_payments(app):
 
     with app.app_context():
         today = datetime.now().date()
+        print(f"[{datetime.now()}] Current date for processing: {today}")
 
+        # फक्त SCHEDULED पेमेंट्स निवडा, कारण PENDING पेमेंट्स आधीच प्रोसेस व्हायला सुरुवात झाली असेल
         payments_to_process = Payment.query.options(joinedload(Payment.user)).filter(
-            (Payment.status == 'SCHEDULED') | (Payment.status == 'PENDING'),
+            Payment.status == 'SCHEDULED', # फक्त 'SCHEDULED' पेमेंट्स निवडा
             Payment.due_date <= today
         ).all()
+
+        if not payments_to_process:
+            print(f"[{datetime.now()}] No new scheduled payments found for processing.")
+            return jsonify({'message': 'No new scheduled payments to process', 'processed': 0, 'failed': 0}), 200
 
         processed_count = 0
         failed_count = 0
 
         for payment in payments_to_process:
+            # रेस कंडीशन टाळण्यासाठी: पेमेंट प्रोसेस करण्यापूर्वी स्टेटस PENDING मध्ये बदला
+            # हे सुनिश्चित करते की जर दुसरा APScheduler जॉब लगेच चालला, तर त्याला हे पेमेंट 'SCHEDULED' दिसणार नाही.
+            if payment.status == 'SCHEDULED':
+                payment.status = 'PENDING'
+                try:
+                    db.session.commit()
+                    print(f"[{datetime.now()}] Payment ID {payment.id} status changed to PENDING.")
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"[{datetime.now()}] Error changing payment ID {payment.id} status to PENDING: {e}")
+                    # जर PENDING मध्ये बदलता आले नाही, तर हे पेमेंट वगळा
+                    continue 
+            else:
+                # जर स्टेटस आधीच PENDING किंवा PAID/FAILED असेल (क्वचितच घडेल कारण क्वेरी फक्त SCHEDULED घेते)
+                print(f"[{datetime.now()}] Skipping payment ID {payment.id} (Payee: {payment.payee}) as it is not in SCHEDULED status.")
+                continue
+
+
             user = payment.user
+            user_email = user.email
 
             payment_date_str = payment.due_date.strftime('%Y-%m-%d')
+            print(f"[{datetime.now()}] Processing payment ID {payment.id} for {user.full_name} (Payee: {payment.payee}, Amount: {payment.amount}, Due Date: {payment_date_str}, Current Status: {payment.status})")
             
-            recipient_email_for_notification = user.email 
+            recipient_email_for_notification = user_email 
 
-            if user.balance >= payment.amount:
-                user.balance -= payment.amount
-                payment.status = 'PAID'
-                processed_count += 1
-                print(f"Processed payment ID {payment.id} for user {user.full_name}. New balance: {user.balance}")
+            bank_balance_from_firestore = 0.0
+            bank_account_doc_ref = None
 
-                subject = f"Autopay: Payment Successful for {payment.payee}"
-                body = (
-                    f"Dear {user.full_name},\n\n"
-                    f"Your payment of ₹{payment.amount:.2f} for {payment.payee} (Due Date: {payment_date_str}) "
-                    f"has been successfully processed.\n\n"
-                    f"Your new balance is ₹{user.balance:.2f}.\n\n"
-                    f"Thank you for using Autopay."
-                )
-                send_notification_email(recipient_email_for_notification, subject, body)
+            bank_collections = ["GlobalBank", "OrbitalBank"]
+            for bank_col_name in bank_collections:
+                docs = firestore_db.collection(bank_col_name).where('email_id', '==', user_email).limit(1).get()
+                if docs:
+                    for doc in docs:
+                        bank_data = doc.to_dict()
+                        try:
+                            bank_balance_from_firestore = float(bank_data.get('balance', '0.0'))
+                            bank_account_doc_ref = doc.reference
+                            print(f"[{datetime.now()}] Found bank balance for {user_email} in {bank_col_name}: {bank_balance_from_firestore}")
+                            break
+                        except ValueError:
+                            print(f"[{datetime.now()}] Warning: Invalid balance format for {user_email} in Firestore: {bank_data.get('balance')}")
+                            bank_balance_from_firestore = 0.0
+                if bank_account_doc_ref:
+                    break
 
-            else:
-                payment.status = 'FAILED'
+            try:
+                if bank_account_doc_ref and bank_balance_from_firestore >= float(payment.amount):
+                    new_bank_balance = bank_balance_from_firestore - float(payment.amount)
+                    
+                    bank_account_doc_ref.update({'balance': str(new_bank_balance)})
+                    payment.status = 'PAID'
+                    processed_count += 1
+                    print(f"[{datetime.now()}] Processed payment ID {payment.id} for user {user.full_name}. New Firebase bank balance: {new_bank_balance}")
+
+                    subject = f"Autopay: Payment Successful for {payment.payee}"
+                    body = (
+                        f"Dear {user.full_name},\n\n"
+                        f"Your payment of ₹{payment.amount:.2f} for {payment.payee} (Due Date: {payment_date_str}) "
+                        f"has been successfully processed.\n\n"
+                        f"Your new bank balance is ₹{new_bank_balance:.2f}.\n\n"
+                        f"Thank you for using Autopay."
+                    )
+                    send_notification_email(recipient_email_for_notification, subject, body)
+                    
+                else:
+                    payment.status = 'FAILED'
+                    failed_count += 1
+                    if not bank_account_doc_ref:
+                        print(f"[{datetime.now()}] Failed to process payment ID {payment.id} for user {user.full_name}. Bank account not found in Firebase for email: {user_email}.")
+                        subject = f"Autopay: Payment Failed for {payment.payee} (Bank Account Not Found)"
+                        body = (
+                            f"Dear {user.full_name},\n\n"
+                            f"Your payment of ₹{payment.amount:.2f} for {payment.payee} (Due Date: {payment_date_str}) "
+                            f"has failed because your connected bank account could not be found in our system.\n\n"
+                            f"Please ensure your bank details are correctly linked.\n\n"
+                            f"Thank you."
+                        )
+                    else:
+                        print(f"[{datetime.now()}] Failed to process payment ID {payment.id} for user {user.full_name}. Insufficient balance. Current Firebase balance: {bank_balance_from_firestore:.2f}")
+                        subject = f"Autopay: Payment Failed for {payment.payee}"
+                        body = (
+                            f"Dear {user.full_name},\n\n"
+                            f"Your payment of ₹{payment.amount:.2f} for {payment.payee} (Due Date: {payment_date_str}) "
+                            f"has failed due to insufficient balance.\n\n"
+                            f"Your current bank balance is ₹{bank_balance_from_firestore:.2f}.\n"
+                            f"Please top up your account or reschedule the payment. "
+                            f"You can reschedule it on the Reschedule/Update page.\n\n"
+                            f"Thank you."
+                        )
+                    send_notification_email(recipient_email_for_notification, subject, body)
+                
+                db.session.commit() # प्रत्येक पेमेंट अपडेट झाल्यावर कमिट करा
+            except Exception as e:
+                db.session.rollback() 
+                payment.status = 'FAILED' 
                 failed_count += 1
-                print(f"Failed to process payment ID {payment.id} for user {user.full_name}. Insufficient balance.")
-
-                subject = f"Autopay: Payment Failed for {payment.payee}"
+                print(f"[{datetime.now()}] Error processing or committing payment ID {payment.id} for user {user.full_name}: {e}")
+                try:
+                    db.session.commit() # एरर आल्यास FAILED स्टेटस कमिट करण्याचा प्रयत्न करा
+                except Exception as rollback_e:
+                    print(f"[{datetime.now()}] Error committing FAILED status after rollback for payment ID {payment.id}: {rollback_e}")
+                
+                subject = f"Autopay: Payment Failed for {payment.payee} (System Error)"
                 body = (
                     f"Dear {user.full_name},\n\n"
                     f"Your payment of ₹{payment.amount:.2f} for {payment.payee} (Due Date: {payment_date_str}) "
-                    f"has failed due to insufficient balance.\n\n"
-                    f"Your current balance is ₹{user.balance:.2f}.\n"
-                    f"Please top up your account or reschedule the payment. "
-                    f"You can reschedule it on the Reschedule/Update page.\n\n"
+                    f"could not be processed due to a system error.\n\n"
+                    f"Please contact support. Error: {e}\n\n"
                     f"Thank you."
                 )
                 send_notification_email(recipient_email_for_notification, subject, body)
+        
+        print(f"[{datetime.now()}] Payment processing round complete. Total Processed: {processed_count}, Total Failed: {failed_count}")
+        return jsonify({'message': 'Payments processed successfully', 'processed': processed_count, 'failed': failed_count}), 200
 
-        try:
-            db.session.commit()
-            print(f"[{datetime.now()}] Payment processing complete. Processed: {processed_count}, Failed: {failed_count}")
-            return jsonify({'message': 'Payments processed successfully', 'processed': processed_count, 'failed': failed_count}), 200
-        except Exception as e:
-            db.session.rollback()
-            print(f"[{datetime.now()}] Error committing payments: {e}")
-            return jsonify({'message': 'Error processing payments', 'error': str(e)}), 500
 
 # ----------------------------------------------------
 # Payment Cancel API
