@@ -27,3 +27,6 @@ logs/
 # Editor specific files
 .vscode/
 .idea/
+
+
+backend/app/firebaseServiceAccountKey.json
