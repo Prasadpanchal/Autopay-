@@ -1,6 +1,6 @@
-// src/pages/Settings.js
+// src/pages/Subscription.js
 import React, { useState } from 'react';
-import './Settings.css';
+import './Subscription.css';
 
 const Settings = () => {
   const [timezone, setTimezone] = useState('Asia/Kolkata');

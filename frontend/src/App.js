@@ -9,7 +9,7 @@ import PaymentList from './pages/PaymentList';
 import RescheduleUpdate from './pages/RescheduleUpdate';
 import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
-import Setting from './pages/Settings';
+import Subscription from './pages/Subscription';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import DepositFunds from './pages/DepositFunds'; 
 import ProfilePage from './pages/ProfilePage'; 
@@ -71,7 +71,7 @@ function App() {
               <Route path="/reschedule-update" element={<RescheduleUpdate />} />
               <Route path="/bulk-upload" element={<BulkUpload />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/settings" element={<Setting />} />
+              <Route path="/subscription" element={<Subscription />} />
               <Route path="*" element={<Dashboard />} /> 
             </>
           ) : (

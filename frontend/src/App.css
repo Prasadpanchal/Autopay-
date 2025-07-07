@@ -20,7 +20,7 @@ body {
   margin-left: 240px; 
   padding: 20px;
   flex: 1;
-  background-color: #E0E0FF;
+  background-color: #E6E6FA;
   width: calc(100% - 240px);
   box-sizing: border-box;
   overflow-y: auto;
