@@ -1,8 +1,8 @@
-"""Reinitialise schema with all user and payment fields
+"""Initial migration
 
-Revision ID: 7acdae81f803
+Revision ID: 6c34c98a8762
 Revises: 
-Create Date: 2025-06-30 17:47:56.893561
+Create Date: 2025-07-05 13:59:38.802204
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7acdae81f803'
+revision = '6c34c98a8762'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,8 +24,6 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('phone_number', sa.String(length=20), nullable=False),
     sa.Column('password_hash', sa.String(length=256), nullable=False),
-    sa.Column('bank_name', sa.String(length=100), nullable=True),
-    sa.Column('balance', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('otp_code', sa.String(length=6), nullable=True),
     sa.Column('otp_expiry', sa.DateTime(), nullable=True),
     sa.Column('otp_verified', sa.Boolean(), server_default=sa.text('false'), nullable=False),

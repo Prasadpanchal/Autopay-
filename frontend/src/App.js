@@ -11,17 +11,20 @@ import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
 import Setting from './pages/Settings';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import DepositFunds from './pages/DepositFunds'; 
-import ProfilePage from './pages/ProfilePage'; 
-import './App.css'; 
+import DepositFunds from './pages/DepositFunds';
+import ProfilePage from './pages/ProfilePage';
+import './App.css';
 import { AuthContext } from './context/AuthContext'; // AuthContext इम्पोर्ट करा
+import AutopaySubscription from './pages/AutopaySubscription';
+<Route path="/autopay" element={<AutopaySubscription />} />
+
 
 function App() {
   // AuthContext मधून isAuthenticated, loading, logout, आणि login फंक्शन्स वापरा
-  const { isAuthenticated, loading, logout, login } = useContext(AuthContext); 
+  const { isAuthenticated, loading, logout, login } = useContext(AuthContext);
 
-  const location = useLocation(); 
-  const navigate = useNavigate(); 
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // handleLogin फंक्शन आता AuthContext च्या login फंक्शनला कॉल करेल
   const handleLogin = (userId, username) => {
@@ -45,34 +48,34 @@ function App() {
   }
 
   // Logic to determine whether to show the sidebar
-  const publicPaths = ['/', '/login', '/reset-password']; 
-  const showSidebar = isAuthenticated && !publicPaths.includes(location.pathname); 
+  const publicPaths = ['/', '/login', '/reset-password'];
+  const showSidebar = isAuthenticated && !publicPaths.includes(location.pathname);
 
   return (
     <div className="app-container">
       {showSidebar && <Sidebar onLogout={handleLogout} />}
-      
+
       <div className={showSidebar ? "app-main-content" : "app-main-content-no-sidebar"}>
         <Routes>
           {/* Public Routes - Always accessible */}
           {/* Login कंपोनेंटला onLogin प्रॉप पास करा, जे AuthContext च्या login फंक्शनला कॉल करेल */}
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} /> 
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Protected Routes - Only accessible if isAuthenticated is true */}
-          {isAuthenticated ? ( 
+          {isAuthenticated ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<ProfilePage />} /> 
-              <Route path="/deposit-funds" element={<DepositFunds />} /> 
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/deposit-funds" element={<DepositFunds />} />
               <Route path="/schedule-payment" element={<SchedulePayment />} />
               <Route path="/payment-list" element={<PaymentList />} />
               <Route path="/reschedule-update" element={<RescheduleUpdate />} />
               <Route path="/bulk-upload" element={<BulkUpload />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/settings" element={<Setting />} />
-              <Route path="*" element={<Dashboard />} /> 
+              <Route path="*" element={<Dashboard />} />
             </>
           ) : (
             // If not authenticated and trying to access a protected route, redirect to /login
