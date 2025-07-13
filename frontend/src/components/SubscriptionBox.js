@@ -49,7 +49,7 @@ function SubscriptionBox({ userEmail }) {
 
     const handleRechargeData = async ({ mobile, operator, amount, dueDate }) => {
         try {
-            await api.Post('/schedule-payment', {
+            await api.post('/schedule-payment', {
                 payee: `${operator} - ${mobile}`,
                 amount,
                 due_date: dueDate,
