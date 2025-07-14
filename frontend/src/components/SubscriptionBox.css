@@ -1,0 +1,54 @@
+/* File: src/components/SubscriptionBox.css */
+.subscription-box {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+    width: 400px;
+    margin-top: 56px;
+    /* 👈 lowered slightly to match left block */
+    align-self: flex-start;
+    /* 👈 ensures alignment to top */
+}
+
+.subscription-box h2 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.subscription-box select,
+.subscription-box button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.subscription-box button {
+    background-color: #6366f1;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.subscription-box button:hover {
+    background-color: #4f46e5;
+}
+
+.success-msg {
+    color: green;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.error-msg {
+    color: red;
+    font-weight: 500;
+    margin-top: 10px;
+}

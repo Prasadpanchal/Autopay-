@@ -1,6 +1,8 @@
 # File: backend/app/routes.py
 
 from flask import Blueprint, request, jsonify, current_app, url_for
+from config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
+import razorpay
 from app import db, mail
 from app.models import User, Payment
 from sqlalchemy.orm import joinedload
@@ -12,6 +14,13 @@ from flask_mail import Message
 import random
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
+
+
+#importing Razorpay Api key 
+
+
+api = Blueprint('api', __name__)
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # --- Firebase Admin SDK Imports and Initialization ---
 import firebase_admin
@@ -924,3 +933,76 @@ def update_payment(payment_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+# ----------------------------------------------------
+# Create plan route
+# ----------------------------------------------------
+
+@api.route('/create-plan', methods=['POST'])
+def create_plan():
+    plan = razorpay_client.plan.create({
+        "period": "monthly",
+        "interval": 1,
+        "item": {
+            "name": "Autopay Monthly Plan",
+            "amount": 9900,  # ₹99 in paise
+            "currency": "INR",
+            "description": "Monthly auto recharge for subscription"
+        }
+    })
+    return jsonify(plan)
+
+
+
+# ----------------------------------------------------
+# Create a Subscription
+# ----------------------------------------------------
+
+@api.route('/create-subscription', methods=['POST'])
+def create_subscription():
+    data = request.get_json()
+    email = data.get("email")
+
+    # ✅ Replace with your real Razorpay TEST Plan ID (from dashboard)
+    plan_id = "plan_QpS8eEnuk6vLFe"
+
+    if not email:
+        return jsonify({"error": "Missing email"}), 400
+
+    try:
+        subscription = razorpay_client.subscription.create({
+            "plan_id": plan_id,
+            "customer_notify": 1,
+            "total_count": 12,
+            "notes": {
+                "email": email
+            }
+        })
+
+        print("[✔] Subscription created:", subscription["id"])
+        return jsonify(subscription)
+
+    except Exception as e:
+        print("[❌] Razorpay Error:", str(e))
+        return jsonify({"error": str(e)}), 500
+    
+    
+# ----------------------------------------------------
+# Create a Subscription
+# ----------------------------------------------------
+
+@api.route('/razorpay-subscriptions', methods=['GET'])
+def get_razorpay_subscriptions():
+    email = request.args.get('email')
+    if not email:
+        return jsonify({'message': 'Email is required'}), 400
+
+    try:
+        result = razorpay_client.subscription.all({'customer_notify': 1})
+        # Filter only relevant subscriptions (demo filter logic)
+        filtered = [s for s in result['items'] if s['notes'].get('email') == email]
+        return jsonify({'subscriptions': filtered}), 200
+    except Exception as e:
+        print("Error fetching subscriptions:", e)
+        return jsonify({'message': 'Failed to fetch subscriptions'}), 500

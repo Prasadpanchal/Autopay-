@@ -1,7 +1,7 @@
 # File: backend/config.py
 
 DB_USER = 'postgres'
-DB_PASS = 'Prasad%40123'
+DB_PASS = 'admin123'
 DB_NAME = 'autopay_db' # Database name
 DB_HOST = 'localhost'
 
@@ -21,3 +21,7 @@ HARDCODED_RECEIVER_EMAIL = 'prasadpanchal431@gmail.com'  # Receiver Mail id
 SENDER_EMAIL = 'prasadpanchalps@gmail.com' # Sender Mail 
 
 MAIL_DEFAULT_SENDER = 'prasadpanchalps@gmail.com' # Sender Mail
+
+# config.py
+RAZORPAY_KEY_ID = "rzp_test_45V78TnJ9P2Ysm"
+RAZORPAY_KEY_SECRET = "e4dGb4chJ69tY4NB8VginV6g"

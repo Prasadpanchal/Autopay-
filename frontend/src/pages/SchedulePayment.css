@@ -30,10 +30,10 @@
 .schedule-container label {
   font-weight: 600;
   color: #34495e;
-  
+
 }
 
-.schedule-container input{
+.schedule-container input {
   width: 94%;
   padding: 12px;
   font-size: 16px;
@@ -45,12 +45,12 @@
   margin-top: 5px;
 }
 
-#amount{
+#amount {
   border-radius: 20px;
   border: none;
 }
 
-.option{
+.option {
   width: 98%;
   margin-bottom: 26px;
   background-color: #f0f0f5;
@@ -65,7 +65,7 @@
   outline: none;
 }
 
-.schedule-container button{
+.schedule-container button {
   background-color: #7767e0;
   color: white;
   padding: 14px;
@@ -77,7 +77,8 @@
   transition: background-color 0.3s ease;
   box-shadow: 0 4px 4px #00000040;
 }
-#submit{
+
+#submit {
   border-radius: 20px;
   background-color: #6a57e3;
   transition: box-shadow .2s;
@@ -97,5 +98,99 @@
 
   .schedule-container h2 {
     font-size: 22px;
+  }
+}
+
+.schedule-page-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 40px 20px;
+}
+
+.schedule-page-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 40px 20px;
+}
+
+.schedule-form-section {
+  flex: 1;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.subscription-summary-section {
+  width: 360px;
+}
+
+.schedule-page-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 30px;
+  gap: 30px;
+}
+
+.schedule-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  width: 50%;
+}
+
+.subscription-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  width: 45%;
+}
+
+/* 🟪 Main flex wrapper for both boxes */
+.schedule-subscription-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 25px;
+  padding: 40px;
+}
+
+/* 🟣 Main payment box */
+.schedule-container {
+  width: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔁 Subscription box right-aligned like a card */
+.subscription-container {
+  width: 400px;
+  background: white;
+  padding: 25px;
+  border-radius: 25px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Mobile responsive */
+@media (max-width: 1024px) {
+  .schedule-subscription-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .subscription-container,
+  .schedule-container {
+    width: 90%;
   }
 }
