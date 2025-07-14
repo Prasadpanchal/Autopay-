@@ -1,4 +1,5 @@
 // File: src/components/Sidebar.js
+import { MdOutlineSubscriptions } from "react-icons/md";
 import React, { useState, useEffect } from 'react'; // useState and useEffect for sidebar state
 import { NavLink, useLocation } from 'react-router-dom';
 import './Sidebar.css';
@@ -90,12 +91,12 @@ const Sidebar = ({ onLogout }) => {
               {sidebarOpen && <span>Reports</span>}
             </NavLink>
           </li>
-          {/* <li>
-            <NavLink to="/settings" className={location.pathname === '/settings' ? 'active' : ''}>
-              <FaCog className="icon" />
-              {sidebarOpen && <span>Settings</span>}
+          <li>
+            <NavLink to="/subscription" className={location.pathname === '/subscription' ? 'active' : ''}>
+              <MdOutlineSubscriptions className="icon" />
+              {sidebarOpen && <span>Subscription</span>}
             </NavLink>
-          </li> */}
+          </li>
         </ul>
       </nav>
       <div className="sidebar-footer">

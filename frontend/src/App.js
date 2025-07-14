@@ -9,6 +9,7 @@ import PaymentList from './pages/PaymentList';
 import RescheduleUpdate from './pages/RescheduleUpdate';
 import BulkUpload from './pages/BulkUpload';
 import Reports from './pages/Reports';
+
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import DepositFunds from './pages/DepositFunds';
 import ProfilePage from './pages/ProfilePage';
@@ -62,8 +63,6 @@ function App() {
               <Route path="/reschedule-update" element={<RescheduleUpdate />} />
               <Route path="/bulk-upload" element={<BulkUpload />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/autopay" element={<AutopaySubscription />} />
-              <Route path="*" element={<Dashboard />} />
             </>
           ) : (
             <Route path="*" element={<Login onLogin={handleLogin} />} />

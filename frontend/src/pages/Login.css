@@ -25,7 +25,11 @@
   font-weight: 700;
   margin-bottom: 25px;
   line-height: 1.3;
-  color: #1a202c; /* Very dark text for emphasis */
+  /* color: #1a202c;  */
+  background: linear-gradient(to right, #5C6BC0, #42A5F5, #8E24AA);
+  -webkit-background-clip: text; /* Clip the background to the text shape */
+  -webkit-text-fill-color: transparent; /* Make the text color transparent to show the background */
+  color: transparent; /* Fallback for browsers that don't support -webkit-text-fill-color */
 }
 
 .info-list {
@@ -126,8 +130,9 @@
 }
 
 .login-container button.otp-button { /* Specific style for OTP buttons */
-  background-color: #007bff; /* Solid blue for OTP */
+  background-image: linear-gradient(90deg, #4964e5, #c544d5); /* Solid blue for OTP */
   color: white;
+  border-radius: 20px;
   margin-top: 5px; /* Small margin for OTP buttons if needed */
 }
 
