@@ -46,10 +46,12 @@ function App() {
       {showSidebar && <Sidebar onLogout={handleLogout} />}
       <div className={showSidebar ? "app-main-content" : "app-main-content-no-sidebar"}>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Login onLogin={handleLogin} />} />
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
+          {/* Private Routes */}
           {isAuthenticated ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
