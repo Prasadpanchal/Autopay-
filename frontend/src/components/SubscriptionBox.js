@@ -110,15 +110,15 @@ function SubscriptionBox({ userEmail }) {
 
     return (
         <div className="subscription-box">
-            <h3>📄 Razorpay Subscriptions</h3>
+            <h3 className='Subscription'>Subscriptions</h3>
             <label>Select Subscription Type</label>
             <select value={subscriptionType} onChange={(e) => setSubscriptionType(e.target.value)}>
                 <option value="">Choose Type</option>
                 <option value="Recharge">Recharge</option>
                 <option value="OTT">OTT</option>
-                {Object.keys(subscriptionPlans).map((plan) => (
+                {/* {Object.keys(subscriptionPlans).map((plan) => (
                     <option key={plan} value={plan}>{plan}</option>
-                ))}
+                ))} */}
             </select>
             <button onClick={handleSubscribeClick}>Subscribe & Pay</button>
 

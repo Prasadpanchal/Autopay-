@@ -91,12 +91,12 @@ const Sidebar = ({ onLogout }) => {
               {sidebarOpen && <span>Reports</span>}
             </NavLink>
           </li>
-          <li>
+          {/* <li>
             <NavLink to="/subscription" className={location.pathname === '/subscription' ? 'active' : ''}>
               <MdOutlineSubscriptions className="icon" />
               {sidebarOpen && <span>Subscription</span>}
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </nav>
       <div className="sidebar-footer">
